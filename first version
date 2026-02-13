@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💌</title>
+  <style>
+    :root{
+      --bg: #ffd1e6;
+      --env: #ff4fa3;
+      --env-dark: #e63a8d;
+      --paper: #fff6fb;
+      --ink: #8a2b5b;
+      --shadow: rgba(0,0,0,.15);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 700px at 50% 20%, #ffe3f1, var(--bg));
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      overflow:hidden;
+    }
+
+    .wrap{
+      width:min(520px, 92vw);
+      text-align:center;
+      padding:32px 20px 28px;
+    }
+
+    .stage{
+      position:relative;
+      width: 320px;
+      height: 240px;
+      margin: 0 auto 18px;
+      display:grid;
+      place-items:center;
+    }
+
+    /* Envelope */
+    .envelope{
+      position:relative;
+      width: 260px;
+      height: 170px;
+      transform: translateY(10px);
+      filter: drop-shadow(0 14px 18px var(--shadow));
+      user-select:none;
+    }
+
+    .env-back{
+      position:absolute;
+      inset:0;
+      background: var(--env);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+
+    .env-body{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, var(--env), var(--env-dark));
+      border-radius: 16px;
+      clip-path: polygon(0 35%, 50% 72%, 100% 35%, 100% 100%, 0 100%);
+      opacity:.9;
+    }
+
+    .env-left, .env-right{
+      position:absolute;
+      inset:0;
+      border-radius:16px;
+      background: color-mix(in srgb, var(--env) 85%, white 15%);
+      opacity:.35;
+    }
+    .env-left{
+      clip-path: polygon(0 35%, 50% 72%, 0 100%);
+    }
+    .env-right{
+      clip-path: polygon(100% 35%, 50% 72%, 100% 100%);
+    }
+
+    .flap{
+      position:absolute;
+      left:0; right:0;
+      top:0;
+      height: 62%;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--env) 70%, white 30%), var(--env));
+      clip-path: polygon(0 0, 100% 0, 50% 85%);
+      transform-origin: 50% 0%;
+      transform: rotateX(0deg);
+      transition: transform 800ms cubic-bezier(.2,.9,.1,1);
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      z-index: 5;
+    }
+
+    .seal{
+      position:absolute;
+      left:50%;
+      top:60%;
+      width: 34px;
+      height: 34px;
+      transform: translate(-50%,-50%) rotate(45deg);
+      background: #ff2f84;
+      border-radius: 10px;
+      box-shadow: 0 8px 14px rgba(0,0,0,.12);
+      z-index: 6;
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+    .seal::before,.seal::after{
+      content:"";
+      position:absolute;
+      width: 34px;
+      height: 34px;
+      background:#ff2f84;
+      border-radius: 50%;
+    }
+    .seal::before{ left:-17px; top:0; }
+    .seal::after{ left:0; top:-17px; }
+
+    /* Letter */
+    .letter{
+      position:absolute;
+      left:50%;
+      bottom: 28px;
+      width: 220px;
+      height: 150px;
+      transform: translateX(-50%) translateY(28px);
+      background: linear-gradient(180deg, #ffffff, var(--paper));
+      border-radius: 14px;
+      box-shadow: 0 12px 16px rgba(0,0,0,.12);
+      border: 1px solid rgba(230,58,141,.22);
+      z-index: 3;
+      opacity:0;
+      pointer-events:none;
+      transition:
+        transform 900ms cubic-bezier(.2,.9,.1,1),
+        opacity 350ms ease;
+      display:grid;
+      place-items:center;
+      padding: 16px;
+      cursor:pointer;
+    }
+
+    .letter .hint{
+      font-size: 13px;
+      color: rgba(138,43,91,.7);
+      letter-spacing: .2px;
+    }
+
+    .letter .msg{
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity 400ms ease, transform 400ms ease;
+      text-align:center;
+    }
+
+    .letter.revealed .msg{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .letter.revealed .hint{ opacity:.25; }
+
+    /* Open state */
+    .open .flap{
+      transform: rotateX(165deg);
+    }
+    .open .seal{
+      opacity:0;
+      transform: translate(-50%,-50%) rotate(45deg) scale(.85);
+    }
+    .open .letter{
+      opacity:1;
+      pointer-events:auto;
+      transform: translateX(-50%) translateY(-40px);
+    }
+
+    /* Buttons */
+    .controls{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin-top: 12px;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor:pointer;
+      background: #ff2f84;
+      color:white;
+      box-shadow: 0 10px 16px rgba(0,0,0,.12);
+      transition: transform 120ms ease, filter 120ms ease, opacity 200ms ease;
+    }
+    button:hover{ filter: brightness(1.05); }
+    button:active{ transform: translateY(1px) scale(.99); }
+    button.secondary{
+      background: rgba(255,47,132,.18);
+      color: #b21f63;
+      box-shadow: none;
+      border: 1px solid rgba(178,31,99,.25);
+    }
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    /* Floating hearts (created via JS) */
+    .heart{
+      position:absolute;
+      left:50%;
+      top: 98px; /* around flap */
+      width: 16px;
+      height: 16px;
+      transform: translate(-50%,-50%) rotate(45deg);
+      background: #ff2f84;
+      border-radius: 4px;
+      pointer-events:none;
+      opacity:0;
+      will-change: transform, opacity;
+      z-index: 20;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.12));
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width: 16px;
+      height: 16px;
+      background:#ff2f84;
+      border-radius: 50%;
+    }
+    .heart::before{ left:-8px; top:0; }
+    .heart::after{ left:0; top:-8px; }
+
+    @keyframes floatUp {
+      0%   { opacity: 0; transform: translate(var(--x0), var(--y0)) rotate(45deg) scale(var(--s)); }
+      10%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--x1), var(--y1)) rotate(45deg) scale(calc(var(--s) * 1.12)); }
+    }
+
+    /* Tiny footer (optional) */
+    .tiny{
+      margin-top: 14px;
+      font-size: 12px;
+      color: rgba(138,43,91,.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="stage" aria-label="Valentine envelope">
+      <div class="envelope" id="envelope">
+        <div class="letter" id="letter" role="button" tabindex="0" aria-label="Open letter">
+          <div>
+            <div class="hint">Tap the letter</div>
+            <div class="msg" id="msg">happy valentines! love you x</div>
+          </div>
+        </div>
+
+        <div class="env-back"></div>
+        <div class="env-left"></div>
+        <div class="env-right"></div>
+        <div class="env-body"></div>
+
+        <div class="flap"></div>
+        <div class="seal"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="openBtn">Open</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <div class="tiny">💗</div>
+  </div>
+
+  <script>
+    const envelope = document.getElementById('envelope');
+    const openBtn  = document.getElementById('openBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const letter   = document.getElementById('letter');
+    const msg      = document.getElementById('msg');
+
+    let isOpen = false;
+    let heartsBurstDone = false;
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function spawnHearts(count = 18){
+      const stage = envelope.parentElement; // .stage
+      const rect = envelope.getBoundingClientRect();
+
+      for(let i=0;i<count;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+
+        // Start near the top center of the envelope
+        const startX = rect.left + rect.width * 0.5;
+        const startY = rect.top + rect.height * 0.33;
+
+        // Random travel
+        const dx = rand(-130, 130);
+        const dy = rand(-220, -120);
+
+        // Slight variation per heart
+        const s  = rand(0.85, 1.6);
+        const x0 = `${rand(-6,6)}px`;
+        const y0 = `${rand(-6,6)}px`;
+
+        // Set CSS variables for animation
+        h.style.setProperty('--s',  s);
+        h.style.setProperty('--x0', x0);
+        h.style.setProperty('--y0', y0);
+        h.style.setProperty('--x1', `${dx}px`);
+        h.style.setProperty('--y1', `${dy}px`);
+
+        // Position the heart in the document (absolute)
+        h.style.position = 'fixed';
+        h.style.left = `${startX}px`;
+        h.style.top  = `${startY}px`;
+
+        const dur = rand(900, 1500);
+        const delay = rand(0, 220);
+
+        h.style.animation = `floatUp ${dur}ms ease-out ${delay}ms forwards`;
+
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), dur + delay + 50);
+      }
+    }
+
+    function openEnvelope(){
+      if(isOpen) return;
+      isOpen = true;
+
+      envelope.classList.add('open');
+
+      // hearts only once per open (until reset)
+      if(!heartsBurstDone){
+        heartsBurstDone = true;
+        spawnHearts(22);
+        // a second smaller burst for “cute” effect
+        setTimeout(() => spawnHearts(10), 180);
+      }
+    }
+
+    function resetAll(){
+      isOpen = false;
+      heartsBurstDone = false;
+      envelope.classList.remove('open');
+      letter.classList.remove('revealed');
+    }
+
+    function revealText(){
+      if(!isOpen) return; // only reveal after open
+      letter.classList.toggle('revealed');
+    }
+
+    openBtn.addEventListener('click', openEnvelope);
+    resetBtn.addEventListener('click', resetAll);
+
+    letter.addEventListener('click', revealText);
+    letter.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        revealText();
+      }
+    });
+
+    // Start clean
+    resetAll();
+  </script>
+</body>
+</html>
