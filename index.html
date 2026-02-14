@@ -4,169 +4,132 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>💌</title>
-
   <style>
     :root{
-      --bg:#fbd1e6;
-      --bg2:#fff4fb;
-      --ink:#2b2b2b;
-      --accent:#ff3c97;
-      --accent2:#ff7bbb;
+      --bg1:#ffe8f2;
+      --bg2:#f7c7d9;
+      --ink:#7a2f4f;
+      --hot:#ff4fa3;
+      --hot2:#ff77ba;
       --blue:#2f63ff;
-      --paper:#fff7fb;
-      --shadow: rgba(0,0,0,.18);
+      --shadow: 0 22px 60px rgba(0,0,0,.20);
     }
 
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      background:
-        radial-gradient(1200px 700px at 50% 10%, var(--bg2), var(--bg));
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--ink);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(circle, var(--bg1) 0%, var(--bg2) 100%);
       overflow-x:hidden;
+      color:#222;
     }
 
-    /* layout wrapper */
-    .page{
-      width:min(1200px, 96vw);
-      padding:40px 12px 60px;
-      display:flex;
-      flex-direction:column;
+    /* layout */
+    .wrap{
+      width:min(1100px, 92vw);
+      margin:0 auto;
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-areas: "left center right";
       align-items:center;
-      gap:26px;
+      gap: clamp(12px, 3vw, 28px);
+      padding: clamp(14px, 3vw, 28px) 0;
+    }
+    .center-col{grid-area:center; display:flex; flex-direction:column; align-items:center; width:100%;}
+    .photos-left{grid-area:left; display:flex; flex-direction:column; gap:16px; align-items:center;}
+    .photos-right{grid-area:right; display:flex; flex-direction:column; gap:16px; align-items:center;}
+
+    @media (max-width: 900px){
+      .wrap{
+        grid-template-columns:1fr;
+        grid-template-areas:
+          "center"
+          "left"
+          "right";
+        justify-items:center;
+      }
+      .photos-left,.photos-right{
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:14px;
+      }
     }
 
-    /* SIDE PHOTO COLUMNS (hidden until needed) */
-    .side-photos{
-      position:fixed;
-      top:110px;
-      left:0;
-      right:0;
-      display:none;
-      pointer-events:none;
-      z-index:2;
-    }
-    .col{
-      position:absolute;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-    }
-    .col.left{ left:45px; }
-    .col.right{ right:45px; }
-
-    .polaroid{
-      width:240px;
-      height:310px;
-      background:#fff;
-      border-radius:22px;
-      padding:10px;
-      box-shadow: 0 18px 35px rgba(0,0,0,.25);
-      border:6px solid rgba(255,255,255,.9);
-      overflow:hidden;
-      transform: rotate(-6deg);
-    }
-    .col.right .polaroid{ transform: rotate(6deg); }
-    .col.left .polaroid:nth-child(2){ transform: rotate(4deg); }
-    .col.right .polaroid:nth-child(2){ transform: rotate(-5deg); }
-    .col.right .polaroid:nth-child(3){ transform: rotate(7deg); }
-
-    .polaroid img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      border-radius:14px;
-      display:block;
-    }
-
-    /* ENVELOPE BLOCK */
-    .stage{
-      position:relative;
-      width:620px;
-      height:520px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:3;
-      filter: drop-shadow(0 30px 40px rgba(0,0,0,.18));
-    }
-
+    /* envelope scales nicely */
     .envelope{
-      position:relative;
-      width:560px;
-      height:360px;
-      border-radius:26px;
-      background: linear-gradient(145deg, #ff4aa2, #d92b7a);
-      box-shadow: 0 20px 40px rgba(0,0,0,.22);
-      overflow:visible;
+      width: clamp(280px, 42vw, 520px);
+      height: clamp(190px, 30vw, 340px);
+      position: relative;
+      filter: drop-shadow(var(--shadow));
+      margin: 0 auto;
     }
-
-    /* bottom pocket (makes it look like an envelope) */
-    .pocket{
-      position:absolute;
-      inset:0;
-      border-radius:26px;
+    .env-back{
+      position:absolute; inset:0;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #ff5cab 0%, #c81d6e 100%);
       overflow:hidden;
     }
-    .pocket:before{
+    /* subtle folds */
+    .env-back::before{
       content:"";
+      position:absolute; inset:-40%;
+      background:
+        linear-gradient(45deg, rgba(255,255,255,.08) 0 40%, rgba(255,255,255,0) 40% 100%),
+        linear-gradient(-45deg, rgba(255,255,255,.08) 0 40%, rgba(255,255,255,0) 40% 100%);
+      transform: rotate(12deg);
+      opacity:.8;
+      pointer-events:none;
+    }
+
+    /* bottom flap */
+    .env-bottom{
       position:absolute;
-      left:0; right:0;
-      bottom:0;
-      height:62%;
+      left:0; right:0; bottom:0;
+      height: 58%;
+      clip-path: polygon(0 100%, 50% 20%, 100% 100%, 100% 100%, 0 100%);
+      background: rgba(255,255,255,.08);
+      pointer-events:none;
+    }
+
+    /* left/right folds */
+    .env-left, .env-right{
+      position:absolute;
+      top: 38%;
+      width: 58%;
+      height: 62%;
       background: rgba(0,0,0,.08);
-      clip-path: polygon(0% 100%, 50% 35%, 100% 100%, 100% 100%, 0% 100%);
+      pointer-events:none;
     }
-    .pocket:after{
-      content:"";
-      position:absolute;
-      left:0; right:0;
-      bottom:-2px;
-      height:66%;
-      background: rgba(255,255,255,.12);
-      clip-path: polygon(0% 100%, 50% 30%, 100% 100%, 100% 100%, 0% 100%);
-      mix-blend-mode: soft-light;
-    }
-
-    /* left & right folds */
-    .fold-left, .fold-right{
-      position:absolute;
-      top:0;
-      width:50%;
-      height:100%;
-      opacity:.22;
-      background:#000;
-    }
-    .fold-left{
-      left:-1px;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
-      opacity:.10;
-    }
-    .fold-right{
-      right:-1px;
-      clip-path: polygon(100% 0, 0 50%, 100% 100%);
-      opacity:.08;
-    }
-
-    /* top flap */
-    .flap{
-      position:absolute;
+    .env-left{
       left:0;
-      top:-200px;
-      width:0;height:0;
-      border-left:280px solid transparent;
-      border-right:280px solid transparent;
-      border-bottom:200px solid #ff7bbb;
-      transform-origin: bottom center;
-      transform: rotateX(0deg);
-      transition: transform .8s ease;
-      filter: drop-shadow(0 14px 18px rgba(0,0,0,.15));
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      background: rgba(255,255,255,.10);
     }
-    .envelope.open .flap{
+    .env-right{
+      right:0;
+      clip-path: polygon(100% 0, 0 50%, 100% 100%);
+      background: rgba(0,0,0,.06);
+    }
+
+    /* top flap that opens upward */
+    .env-top{
+      position:absolute;
+      left: 0; right: 0;
+      top: 0;
+      height: 60%;
+      background: linear-gradient(135deg, #ff7bc2 0%, #ff4fa3 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 92%);
+      transform-origin: 50% 0%;
+      transform: rotateX(0deg);
+      transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+      border-top-left-radius: 26px;
+      border-top-right-radius: 26px;
+      z-index: 5;
+    }
+    .envelope.open .env-top{
       transform: rotateX(180deg);
     }
 
@@ -174,358 +137,515 @@
     .letter{
       position:absolute;
       left:50%;
-      transform: translateX(-50%);
-      top:120px;
-      width:460px;
-      min-height:240px;
-      background: var(--paper);
-      border-radius:22px;
-      border:5px solid var(--blue);
-      box-shadow: 0 18px 38px rgba(0,0,0,.22);
-      padding:26px 24px 22px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      align-items:center;
-      text-align:center;
-      transition: all .65s ease;
-      z-index:5;
-      pointer-events:none; /* locked until unlocked */
-      opacity:.0;
+      bottom: 16%;
       transform: translateX(-50%) translateY(30px);
+      width: clamp(300px, 62vw, 720px);
+      max-width: 100%;
+      background: rgba(255,255,255,.85);
+      border: 5px solid var(--blue);
+      border-radius: 22px;
+      padding: clamp(18px, 2.6vw, 28px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.18);
+      text-align:center;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 420ms ease, transform 650ms cubic-bezier(.2,.8,.2,1);
+      z-index: 10;
     }
-
     .envelope.open .letter{
-      top:-40px;
-      width:640px; /* wider when opened */
       opacity:1;
       transform: translateX(-50%) translateY(0px);
       pointer-events:auto;
     }
-
-    .title{
-      margin:0;
-      font-size:42px;
-      line-height:1.08;
-      color:#7f2f55;
-      letter-spacing:-.02em;
-      font-weight:800;
+    .letter.wide{
+      width: clamp(340px, 70vw, 820px);
     }
 
-    .btnrow{
+    .letter h1{
+      margin:0 0 8px 0;
+      font-size: clamp(28px, 4.2vw, 54px);
+      line-height:1.05;
+      color: var(--ink);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-transform: lowercase;
+    }
+    .letter p{
+      margin: 8px 0 0 0;
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .btn-row{
       display:flex;
-      gap:16px;
+      gap: 14px;
       justify-content:center;
-      margin-top:6px;
-      flex-wrap:wrap;
-      position:relative;
+      margin-top: 18px;
     }
-
-    button{
+    .btn{
       border:none;
-      border-radius:999px;
-      padding:14px 28px;
-      font-size:18px;
-      font-weight:700;
       cursor:pointer;
-      transition: transform .12s ease, filter .12s ease;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 18px;
+      transition: transform .12s ease, box-shadow .12s ease;
       user-select:none;
     }
-    button:active{ transform: translateY(1px) scale(.99); }
-    .btn-accept{ background: var(--accent); color:#fff; box-shadow: 0 10px 22px rgba(255,60,151,.35); }
-    .btn-reject{ background: #f1c6d8; color:#7f2f55; border:2px solid var(--blue); box-shadow: 0 8px 18px rgba(0,0,0,.12); }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn-accept{
+      background: linear-gradient(135deg, var(--hot) 0%, var(--hot2) 100%);
+      color:white;
+      box-shadow: 0 10px 22px rgba(255,79,163,.35);
+    }
+    .btn-reject{
+      background: rgba(255,255,255,.55);
+      color: var(--ink);
+      border: 3px solid var(--blue);
+      box-shadow: 0 10px 22px rgba(47,99,255,.12);
+      position: relative; /* we move it with translate */
+    }
 
-    /* CODE SECTION */
-    .code{
-      width:min(820px, 92vw);
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      align-items:center;
+    /* hint + input area */
+    .controls{
+      margin-top: clamp(14px, 2.5vw, 20px);
+      width: min(720px, 92vw);
       text-align:center;
-      z-index:4;
     }
-
-    .quote{
-      margin:0;
-      font-size:22px;
+    .hint{
+      font-size: clamp(16px, 2vw, 20px);
       line-height:1.35;
-      color:#1f1f1f;
+      color: #111;
     }
-    .quote i{ font-style:italic; }
-
-    .code-row{
+    .hint em{ font-style: italic; }
+    .input-row{
+      margin-top: 14px;
       display:flex;
-      gap:14px;
-      flex-wrap:wrap;
       justify-content:center;
-      align-items:center;
+      gap: 14px;
+      flex-wrap:wrap;
     }
-
-    input{
-      width:min(520px, 86vw);
-      padding:16px 18px;
-      border-radius:18px;
-      border:3px solid #ff6fb3;
-      background:#fff7fb;
-      font-size:20px;
+    input[type="text"]{
+      width: min(520px, 92vw);
+      height: 58px;
+      padding: 0 18px;
+      border-radius: 18px;
+      border: 3px solid rgba(255,79,163,.55);
+      background: rgba(255,255,255,.55);
+      font-size: 20px;
       outline:none;
+      box-shadow: 0 16px 40px rgba(0,0,0,.10);
     }
-    input:focus{
-      border-color: var(--accent);
-      box-shadow: 0 0 0 6px rgba(255,60,151,.14);
+    input[type="text"]:focus{
+      border-color: var(--hot);
+      background: rgba(255,255,255,.75);
     }
-    .btn-unlock{ background: var(--accent); color:#fff; padding:16px 30px; font-size:20px; }
+    .unlock{
+      height: 58px;
+      padding: 0 22px;
+      border-radius: 18px;
+      border:none;
+      cursor:pointer;
+      font-weight:900;
+      font-size: 20px;
+      background: linear-gradient(135deg, var(--hot) 0%, var(--hot2) 100%);
+      color:white;
+      box-shadow: 0 14px 30px rgba(255,79,163,.35);
+    }
+    .unlock:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
 
-    .btn-reset{
-      margin-top:18px;
-      background:#ffe9f4;
-      color:#7f2f55;
-      border:3px solid #ffb7d8;
-      padding:16px 34px;
-      font-size:20px;
-      box-shadow: 0 14px 26px rgba(0,0,0,.12);
+    .reset{
+      margin-top: 16px;
+      height: 52px;
+      padding: 0 26px;
+      border-radius: 999px;
+      border: 3px solid rgba(255,79,163,.25);
+      background: rgba(255,255,255,.55);
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--ink);
+      box-shadow: 0 14px 30px rgba(0,0,0,.08);
     }
 
-    /* CONFETTI */
-    .confetti{
-      position:fixed;
-      top:-30px;
-      font-size:30px;
-      z-index:10;
-      animation: fall linear forwards;
+    /* photos */
+    .photo{
+      width: clamp(170px, 18vw, 260px);
+      aspect-ratio: 3 / 4;
+      border-radius: 18px;
+      border: 10px solid #fff;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+      overflow:hidden;
+      background:#fff;
+      transform: rotate(var(--r, 0deg));
+      opacity: 0;
+      transform-origin:center;
+      transition: opacity 350ms ease;
+    }
+    .photo.show{ opacity: 1; }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    @media (max-width: 900px){
+      .photo{ width: clamp(150px, 40vw, 230px); }
+    }
+    @media (max-width: 420px){
+      .photo{ width: 86vw; max-width: 300px; }
+    }
+
+    /* confetti hearts/tennis */
+    .confetti-layer{
+      position: fixed;
+      inset: 0;
       pointer-events:none;
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
+      overflow:hidden;
+      z-index: 999;
+    }
+    .confetti{
+      position:absolute;
+      top: -40px;
+      font-size: 26px;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.15));
+      user-select:none;
     }
     @keyframes fall{
-      to{ transform: translateY(110vh) rotate(360deg); opacity:.95; }
+      to{
+        transform: translateY(calc(100vh + 80px)) rotate(360deg);
+        opacity: 0.95;
+      }
     }
 
-    /* responsive */
-    @media (max-width: 980px){
-      .side-photos{ display:none !important; }
-      .stage{ width:96vw; height:520px; }
-      .envelope{ width:92vw; max-width:560px; }
-      .flap{
-        border-left: calc(min(280px, 46vw)) solid transparent;
-        border-right: calc(min(280px, 46vw)) solid transparent;
-        border-bottom: 200px solid #ff7bbb;
-      }
+    /* hide section helper */
+    .hidden{ display:none !important; }
+
+    /* small message under input */
+    .error{
+      margin-top: 10px;
+      font-weight: 800;
+      color: #b1004f;
+      min-height: 22px;
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
+  <div class="confetti-layer" id="confettiLayer"></div>
 
-    <!-- SIDE PHOTOS (love) -->
-    <div class="side-photos" id="lovePhotos">
-      <div class="col left">
-        <div class="polaroid"><img src="assets/p1.jpg" alt=""></div>
-        <div class="polaroid"><img src="assets/p3.jpg" alt=""></div>
-      </div>
-      <div class="col right">
-        <div class="polaroid"><img src="assets/p5.jpg" alt=""></div>
-        <div class="polaroid"><img src="assets/p2.jpg" alt=""></div>
-        <div class="polaroid"><img src="assets/p4.jpg" alt=""></div>
-      </div>
-    </div>
+  <div class="wrap">
+    <div class="photos-left" id="photosLeft"></div>
 
-    <!-- SIDE PHOTOS (cats) -->
-    <div class="side-photos" id="catPhotos">
-      <div class="col left">
-        <div class="polaroid"><img src="assets/cat1.jpg" alt=""></div>
-        <div class="polaroid"><img src="assets/cat2.jpg" alt=""></div>
-      </div>
-      <div class="col right">
-        <div class="polaroid"><img src="assets/cat3.jpg" alt=""></div>
-      </div>
-    </div>
+    <div class="center-col">
+      <div class="envelope" id="envelope">
+        <div class="env-back"></div>
+        <div class="env-left"></div>
+        <div class="env-right"></div>
+        <div class="env-bottom"></div>
+        <div class="env-top"></div>
 
-    <!-- ENVELOPE STAGE -->
-    <div class="stage">
-      <div class="envelope" id="envelope" aria-label="envelope">
-        <div class="flap"></div>
+        <div class="letter" id="letter" aria-live="polite">
+          <h1 id="letterTitle">congratulations!<br>you<br>have won a certificate<br>for 1000 kisses💋</h1>
 
-        <div class="pocket"></div>
-        <div class="fold-left"></div>
-        <div class="fold-right"></div>
-
-        <div class="letter" id="letter">
-          <h1 class="title" id="letterTitle">
-            congratulations! you have won a certificate for 1000 kisses 💋
-          </h1>
-
-          <div class="btnrow" id="btnRow">
-            <button class="btn-accept" id="acceptBtn" type="button">Accept</button>
-            <button class="btn-reject" id="rejectBtn" type="button">Reject</button>
+          <div class="btn-row" id="letterButtons">
+            <button class="btn btn-accept" id="acceptBtn" type="button">Accept</button>
+            <button class="btn btn-reject" id="rejectBtn" type="button">Reject</button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- CODE SECTION (shown first, hidden after accept/reject) -->
-    <div class="code" id="codeSection">
-      <p class="quote">
-        <i>"i am sinkinggg... u should know the code.</i><br>
-        Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters"
-      </p>
+      <div class="controls" id="controls">
+        <div class="hint" id="hint">
+          “i am <em>sinkinggg</em>.. u should know the code.<br>
+          Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters”
+        </div>
 
-      <div class="code-row">
-        <!-- visible letters while typing -->
-        <input id="codeInput" type="text" autocomplete="off" spellcheck="false" />
-        <button class="btn-unlock" id="unlockBtn" type="button">Unlock</button>
+        <div class="input-row">
+          <input id="codeInput" type="text" autocomplete="off" spellcheck="false" placeholder="type the code here…" />
+          <button id="unlockBtn" class="unlock" type="button">Unlock</button>
+        </div>
+
+        <div class="error" id="errorText"></div>
+
+        <button id="resetBtn" class="reset" type="button">Reset</button>
       </div>
-
-      <button class="btn-reset" id="resetBtn" type="button">Reset</button>
     </div>
 
+    <div class="photos-right" id="photosRight"></div>
   </div>
 
   <script>
+    // ======= CONFIG =======
+    const SECRET = "sweetheart";
+
+    // couple photos (already in your repo as assets/p1.jpg ... assets/p5.jpg)
+    const COUPLE_PHOTOS = [
+      { src: "assets/p2.jpg", r: "-6deg" },
+      { src: "assets/p5.jpg", r: "7deg" },
+      { src: "assets/p3.jpg", r: "-8deg" },
+      { src: "assets/p4.jpg", r: "6deg" },
+      { src: "assets/p1.jpg", r: "-7deg" },
+    ];
+
+    // cat photos (add these into /assets/ as c1.jpg c2.jpg c3.jpg)
+    // If you haven't uploaded them yet, do that and name them exactly like below.
+    const CAT_PHOTOS = [
+      { src: "assets/c1.jpg", r: "-6deg" },
+      { src: "assets/c2.jpg", r: "7deg" },
+      { src: "assets/c3.jpg", r: "-5deg" },
+    ];
+
+    // ======= ELEMENTS =======
     const envelope = document.getElementById("envelope");
-    const codeSection = document.getElementById("codeSection");
+    const letter = document.getElementById("letter");
+    const letterTitle = document.getElementById("letterTitle");
+    const letterButtons = document.getElementById("letterButtons");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const rejectBtn = document.getElementById("rejectBtn");
+
+    const controls = document.getElementById("controls");
+    const hint = document.getElementById("hint");
     const codeInput = document.getElementById("codeInput");
     const unlockBtn = document.getElementById("unlockBtn");
     const resetBtn = document.getElementById("resetBtn");
+    const errorText = document.getElementById("errorText");
 
-    const acceptBtn = document.getElementById("acceptBtn");
-    const rejectBtn = document.getElementById("rejectBtn");
-    const letterTitle = document.getElementById("letterTitle");
-    const btnRow = document.getElementById("btnRow");
+    const photosLeft = document.getElementById("photosLeft");
+    const photosRight = document.getElementById("photosRight");
+    const confettiLayer = document.getElementById("confettiLayer");
 
-    const lovePhotos = document.getElementById("lovePhotos");
-    const catPhotos  = document.getElementById("catPhotos");
-
+    // ======= STATE =======
     let unlocked = false;
-    let rejectMoves = 0;
+    let outcome = "none"; // "none" | "accepted" | "rejected"
+    let rejectDodges = 0;
+    let rejectDodgingEnabled = true;
 
-    function hardReset(){
-      unlocked = false;
-      rejectMoves = 0;
-
-      envelope.classList.remove("open");
-      codeSection.style.display = "flex";
-
-      lovePhotos.style.display = "none";
-      catPhotos.style.display = "none";
-
-      letterTitle.textContent = "congratulations! you have won a certificate for 1000 kisses 💋";
-      btnRow.innerHTML = `
-        <button class="btn-accept" id="acceptBtn" type="button">Accept</button>
-        <button class="btn-reject" id="rejectBtn" type="button">Reject</button>
-      `;
-
-      // re-bind buttons after innerHTML reset
-      bindButtons();
-
-      codeInput.value = "";
-      codeInput.focus();
+    // ======= HELPERS =======
+    function norm(s){
+      return (s || "").trim().toLowerCase();
     }
 
-    function bindButtons(){
-      const a = document.getElementById("acceptBtn");
-      const r = document.getElementById("rejectBtn");
-
-      a.addEventListener("click", () => {
-        if(!unlocked) return; // cannot accept without code
-        doAccept();
-      });
-
-      r.addEventListener("mouseenter", () => {
-        if(!unlocked) return;
-        dodgeReject(r);
-      });
-
-      r.addEventListener("click", () => {
-        if(!unlocked) return;
-        doReject();
-      });
+    function clearPhotos(){
+      photosLeft.innerHTML = "";
+      photosRight.innerHTML = "";
     }
 
-    function dodgeReject(btn){
-      // playful but still clickable: only dodge a few times and not too far
-      if (rejectMoves >= 5) return;
+    function renderPhotos(list){
+      clearPhotos();
 
-      const jitterX = (Math.random() * 120) - 60; // -60..60
-      const jitterY = (Math.random() * 50) - 25;  // -25..25
+      // Split into left/right roughly like your screenshot:
+      // left gets first 2, right gets rest
+      const left = list.slice(0,2);
+      const right = list.slice(2);
 
-      btn.style.position = "relative";
-      btn.style.left = jitterX + "px";
-      btn.style.top  = jitterY + "px";
-
-      rejectMoves++;
-      // after a short time, come back closer so it’s still catchable
-      setTimeout(() => {
-        btn.style.left = "0px";
-        btn.style.top  = "0px";
-      }, 280);
-    }
-
-    function unlock(){
-      const val = (codeInput.value || "").trim().toLowerCase();
-      if(val === "sweetheart"){
-        unlocked = true;
-        envelope.classList.add("open");
-        // keep code section visible until accept/reject is chosen (as you had)
-      } else {
-        alert("wrong code 💔");
+      for(const p of left){
+        const card = document.createElement("div");
+        card.className = "photo show";
+        card.style.setProperty("--r", p.r);
+        const img = document.createElement("img");
+        img.src = p.src;
+        img.alt = "";
+        card.appendChild(img);
+        photosLeft.appendChild(card);
+      }
+      for(const p of right){
+        const card = document.createElement("div");
+        card.className = "photo show";
+        card.style.setProperty("--r", p.r);
+        const img = document.createElement("img");
+        img.src = p.src;
+        img.alt = "";
+        card.appendChild(img);
+        photosRight.appendChild(card);
       }
     }
 
-    function doAccept(){
-      // hide code section after decision
-      codeSection.style.display = "none";
+    function startConfetti(){
+      // hearts + tennis balls
+      const symbols = ["💗","💖","💘","💞","🎾","🎾","🎾"];
+      const count = 46;
 
-      // confetti hearts + tennis balls
-      burstConfetti(60);
-
-      letterTitle.textContent = "yayyy, contact your gf for activation :) happy valentines 🫶";
-      // remove buttons after accept (optional — clean)
-      btnRow.innerHTML = "";
-
-      // show couple photos
-      lovePhotos.style.display = "block";
-      catPhotos.style.display = "none";
-    }
-
-    function doReject(){
-      codeSection.style.display = "none";
-
-      letterTitle.textContent = "think againnn";
-      // keep buttons off after reject (clean)
-      btnRow.innerHTML = "";
-
-      lovePhotos.style.display = "none";
-      catPhotos.style.display = "block";
-    }
-
-    function burstConfetti(count){
-      const emojis = ["💖","💗","💞","🎾","💘","🎾"];
       for(let i=0;i<count;i++){
         const el = document.createElement("div");
         el.className = "confetti";
-        el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        el.style.left = Math.random()*100 + "vw";
-        el.style.animationDuration = (Math.random()*1.7 + 2.2) + "s";
-        el.style.transform = `translateY(0) rotate(${Math.random()*180}deg)`;
-        el.style.opacity = (Math.random()*0.35 + 0.65).toFixed(2);
-        document.body.appendChild(el);
-        setTimeout(()=> el.remove(), 4200);
+        el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+
+        const x = Math.random()*100; // vw
+        const dur = 2.6 + Math.random()*1.8;
+        const delay = Math.random()*0.25;
+
+        el.style.left = x + "vw";
+        el.style.animationDuration = dur + "s";
+        el.style.animationDelay = delay + "s";
+
+        const size = 18 + Math.floor(Math.random()*18);
+        el.style.fontSize = size + "px";
+
+        confettiLayer.appendChild(el);
+
+        // cleanup
+        setTimeout(()=> el.remove(), (dur + delay) * 1000 + 400);
       }
     }
 
-    // bindings
-    unlockBtn.addEventListener("click", unlock);
-    resetBtn.addEventListener("click", hardReset);
+    function openEnvelope(){
+      envelope.classList.add("open");
+      letter.classList.add("wide");
+      startConfetti();
+    }
 
-    codeInput.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") unlock();
+    function closeEnvelope(){
+      envelope.classList.remove("open");
+      letter.classList.remove("wide");
+    }
+
+    function hideCodeSection(){
+      hint.classList.add("hidden");
+      document.querySelector(".input-row").classList.add("hidden");
+      errorText.classList.add("hidden");
+    }
+
+    function showCodeSection(){
+      hint.classList.remove("hidden");
+      document.querySelector(".input-row").classList.remove("hidden");
+      errorText.classList.remove("hidden");
+    }
+
+    function setLetterInitial(){
+      letterTitle.innerHTML = "congratulations!<br>you<br>have won a certificate<br>for 1000 kisses💋";
+      letterButtons.classList.remove("hidden");
+      acceptBtn.classList.remove("hidden");
+      rejectBtn.classList.remove("hidden");
+    }
+
+    function setLetterAccepted(){
+      letterTitle.innerHTML = "yayyy, contact your gf<br>for activation :)<br>happy valentines 🫶";
+      // keep buttons visible or not? (your spec: after accept, no need for code line; buttons can stay or not)
+      // We'll keep them but disable accept (so it doesn't re-trigger), reject still exists but won't change outcome.
+      acceptBtn.disabled = true;
+      rejectBtn.disabled = true;
+    }
+
+    function setLetterRejected(){
+      letterTitle.textContent = "think again";
+      // keep buttons visible so he can still accept afterward if you want:
+      acceptBtn.disabled = false;
+      rejectBtn.disabled = false;
+    }
+
+    // ======= REJECT BUTTON "MOVE" BUT STILL CLICKABLE =======
+    function dodgeReject(){
+      if(!rejectDodgingEnabled) return;
+
+      // dodge only a few times, then stop so it becomes clickable
+      rejectDodges++;
+      if(rejectDodges >= 5){
+        rejectDodgingEnabled = false;
+        return;
+      }
+
+      const max = 42; // px
+      const dx = (Math.random()*2 - 1) * max;
+      const dy = (Math.random()*2 - 1) * (max*0.55);
+
+      rejectBtn.style.transform = `translate(${dx}px, ${dy}px)`;
+      // softly return after a moment
+      setTimeout(()=>{
+        rejectBtn.style.transform = `translate(0px, 0px)`;
+      }, 380);
+    }
+
+    // ======= ACTIONS =======
+    function tryUnlock(){
+      if(unlocked) return;
+
+      const val = norm(codeInput.value);
+      if(val === SECRET){
+        unlocked = true;
+        errorText.textContent = "";
+        unlockBtn.disabled = true;
+        codeInput.disabled = true;
+
+        openEnvelope();
+        // show the initial letter with buttons (only now!)
+        setLetterInitial();
+
+        // still keep the code line until accept/reject happens (your earlier spec)
+        // Do NOT show any photos yet
+        clearPhotos();
+      } else {
+        errorText.textContent = "wrong code — try again";
+      }
+    }
+
+    function onAccept(){
+      if(!unlocked) return;
+
+      outcome = "accepted";
+      hideCodeSection();
+      setLetterAccepted();
+      renderPhotos(COUPLE_PHOTOS);
+    }
+
+    function onReject(){
+      if(!unlocked) return;
+
+      outcome = "rejected";
+      hideCodeSection();
+      setLetterRejected();
+      renderPhotos(CAT_PHOTOS);
+    }
+
+    function resetAll(){
+      unlocked = false;
+      outcome = "none";
+      rejectDodges = 0;
+      rejectDodgingEnabled = true;
+      acceptBtn.disabled = false;
+      rejectBtn.disabled = false;
+      rejectBtn.style.transform = "translate(0px,0px)";
+
+      closeEnvelope();
+      clearPhotos();
+
+      setLetterInitial();
+      // but keep letter hidden until unlocked (envelope closed => letter hidden)
+      showCodeSection();
+      errorText.textContent = "";
+
+      codeInput.value = "";
+      codeInput.disabled = false;
+      unlockBtn.disabled = false;
+
+      // focus input for convenience
+      setTimeout(()=> codeInput.focus(), 80);
+    }
+
+    // ======= WIRE UP =======
+    unlockBtn.addEventListener("click", tryUnlock);
+    codeInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") tryUnlock();
     });
 
-    // initial bind
-    bindButtons();
-    codeInput.focus();
+    acceptBtn.addEventListener("click", onAccept);
+
+    // reject dodges on hover/touch move but still becomes clickable after a few dodges
+    rejectBtn.addEventListener("mouseenter", dodgeReject);
+    rejectBtn.addEventListener("mousemove", dodgeReject);
+    rejectBtn.addEventListener("click", onReject);
+
+    resetBtn.addEventListener("click", resetAll);
+
+    // Initial state (closed envelope, no letter interaction)
+    // Make sure buttons can't be used until unlocked (even if someone tabs)
+    acceptBtn.addEventListener("mousedown", (e)=>{ if(!unlocked) e.preventDefault(); });
+    rejectBtn.addEventListener("mousedown", (e)=>{ if(!unlocked) e.preventDefault(); });
+
+    // start clean
+    resetAll();
   </script>
 </body>
 </html>
+
