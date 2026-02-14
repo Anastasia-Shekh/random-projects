@@ -286,7 +286,7 @@
       box-shadow: var(--shadow2);
       position:absolute;
       overflow:hidden;
-      transform: rotate(var(--rot, 0deg));
+      transform: translateX(var(--tx, 0px)) translateY(var(--ty, 0px)) rotate(var(--rot, 0deg));
     }
     .photo img{
       width:100%;
@@ -297,12 +297,13 @@
     }
 
     /* ✅ ONLY CHANGE: spread ACCEPT photos farther apart */
-    .accL1{ left: clamp(14px, 3.6vw, 64px); top: 6%;  --rot:-7deg; }
-    .accL2{ left: clamp(22px, 4.6vw, 84px); top: 40%; --rot:6deg; }
-    .accL3{ left: clamp(14px, 3.6vw, 64px); top: 76%; --rot:-6deg; }
+.accL1{ left: clamp(10px, 2vw, 24px); top: 6%;  --rot:-7deg; --tx: -70px; }
+.accL2{ left: clamp(16px, 2.6vw, 32px); top: 40%; --rot: 6deg; --tx: -95px; }
+.accL3{ left: clamp(10px, 2vw, 24px); top: 78%; --rot:-6deg; --tx: -70px; }
 
-    .accR1{ right: clamp(14px, 3.6vw, 64px); top: 8%;  --rot:7deg; }
-    .accR2{ right: clamp(14px, 3.6vw, 64px); top: 62%; --rot:-5deg; }
+.accR1{ right: clamp(10px, 2vw, 24px); top: 8%;  --rot: 7deg; --tx:  70px; }
+.accR2{ right: clamp(10px, 2vw, 24px); top: 64%; --rot:-5deg; --tx:  85px; }
+
 
     /* Reject cats layout (unchanged) */
     .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
