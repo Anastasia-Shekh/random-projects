@@ -4,14 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>💌</title>
+
   <style>
     :root{
-      --bg: #ffd1e6;
-      --env: #ff4fa3;
-      --env-dark: #e63a8d;
-      --paper: #fff6fb;
-      --ink: #8a2b5b;
-      --shadow: rgba(0,0,0,.15);
+      --bg:#ffd1e6;
+      --bg2:#ffe3f0;
+      --env:#ff4fa3;
+      --env-dark:#e63a8d;
+      --paper:#fff6fb;
+      --ink:#8a2b5b;
+      --shadow: rgba(0,0,0,.18);
+      --accent:#ff2e8f;
     }
 
     *{ box-sizing:border-box; }
@@ -20,365 +23,573 @@
       min-height:100vh;
       display:grid;
       place-items:center;
-      background: radial-gradient(1200px 700px at 50% 20%, #ffe3f1, var(--bg));
+      background: radial-gradient(1200px 700px at 50% 18%, #fff1f8, var(--bg));
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       overflow:hidden;
     }
 
     .wrap{
-      width:min(520px, 92vw);
+      width:min(720px, 94vw);
       text-align:center;
-      padding:32px 20px 28px;
+      padding: 26px 18px 34px;
+      position:relative;
     }
 
+    /* Stage */
     .stage{
-  position:relative;
-  width: 420px;   
-  height: 320px;  
-  margin: 0 auto 18px;
-  display:grid;
-  place-items:center;
-}
+      position:relative;
+      width: 360px;          
+      height: 290px;
+      margin: 0 auto 18px;
+      display:grid;
+      place-items:center;
+    }
+
+    /* Photos ring (hidden until accept/reject) */
+    .photo-ring{
+      position:absolute;
+      inset: 0;
+      pointer-events:none;
+      z-index: 1;
+      opacity: 0;
+      transform: scale(.98);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .photo-ring.show{
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .photo{
+      position:absolute;
+      width: 132px;
+      height: 168px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: #fff;
+      padding: 10px 10px 18px;
+      box-shadow: 0 18px 34px rgba(0,0,0,.20);
+      border: 1px solid rgba(230,58,141,.20);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .photo::after{ content:""; } /* harmless for img */
+    .photo-ring.show .photo{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Positions */
+    .p1{ left:-24px; top:8px; transform: rotate(-7deg) translateY(8px); }
+    .p2{ right:-24px; top:18px; transform: rotate(8deg) translateY(8px); }
+    .p3{ left:-14px; bottom:10px; transform: rotate(9deg) translateY(8px); }
+    .p4{ right:-14px; bottom:22px; transform: rotate(-8deg) translateY(8px); }
+    .p5{ left:50%; top:-18px; transform: translateX(-50%) rotate(4deg) translateY(8px); }
+
+    @media (max-width: 520px){
+      .stage{ width: 320px; height: 280px; }
+      .photo{ width: 104px; height: 132px; }
+      .p5{ display:none; }
+    }
 
     /* Envelope */
     .envelope{
-  position:relative;
-  width: 340px;   
-  height: 220px;  
-  transform: translateY(10px);
-  filter: drop-shadow(0 14px 18px var(--shadow));
-  user-select:none;
-}
-
-    .env-back{
-      position:absolute;
-      inset:0;
-      background: var(--env);
-      border-radius: 16px;
-      overflow:hidden;
+      position:relative;
+      width: 320px;   /* bigger */
+      height: 220px;
+      filter: drop-shadow(0 20px 26px rgba(0,0,0,.18));
+      z-index: 2;
     }
 
     .env-body{
       position:absolute;
-      inset:0;
+      inset: 0;
+      border-radius: 22px;
       background: linear-gradient(180deg, var(--env), var(--env-dark));
-      border-radius: 16px;
-      clip-path: polygon(0 35%, 50% 72%, 100% 35%, 100% 100%, 0 100%);
-      opacity:.9;
+      overflow:hidden;
     }
 
-    .env-left, .env-right{
-      position:absolute;
-      inset:0;
-      border-radius:16px;
-      background: color-mix(in srgb, var(--env) 85%, white 15%);
-      opacity:.35;
-    }
-    .env-left{
-      clip-path: polygon(0 35%, 50% 72%, 0 100%);
-    }
-    .env-right{
-      clip-path: polygon(100% 35%, 50% 72%, 100% 100%);
-    }
-
-    .flap{
-      position:absolute;
-      left:0; right:0;
-      top:0;
-      height: 62%;
-      background: linear-gradient(180deg, color-mix(in srgb, var(--env) 70%, white 30%), var(--env));
-      clip-path: polygon(0 0, 100% 0, 50% 85%);
-      transform-origin: 50% 0%;
-      transform: rotateX(0deg);
-      transition: transform 800ms cubic-bezier(.2,.9,.1,1);
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-      z-index: 5;
-    }
-
-    .seal{
-      position:absolute;
-      left:50%;
-      top:60%;
-      width: 34px;
-      height: 34px;
-      transform: translate(-50%,-50%) rotate(45deg);
-      background: #ff2f84;
-      border-radius: 10px;
-      box-shadow: 0 8px 14px rgba(0,0,0,.12);
-      z-index: 6;
-      transition: opacity 350ms ease, transform 350ms ease;
-    }
-    .seal::before,.seal::after{
+    .env-body::before{
       content:"";
       position:absolute;
-      width: 34px;
-      height: 34px;
-      background:#ff2f84;
-      border-radius: 50%;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,0) 55%),
+        linear-gradient(225deg, rgba(255,255,255,.16), rgba(255,255,255,0) 60%);
+      mix-blend-mode: screen;
+      opacity:.55;
     }
-    .seal::before{ left:-17px; top:0; }
-    .seal::after{ left:0; top:-17px; }
+
+    /* inner diamond */
+    .env-inner{
+      position:absolute;
+      left:50%;
+      top:52%;
+      width: 210px;
+      height: 150px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: rgba(0,0,0,.06);
+      border-radius: 18px;
+    }
+
+    /* flap */
+    .flap{
+      position:absolute;
+      left: 50%;
+      top: 10px;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-bottom: 120px solid #ff77bf;
+      transform-origin: 50% 0%;
+      z-index: 5;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.12));
+      transition: transform 900ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    .envelope.open .flap{
+      transform: translateX(-50%) rotateX(180deg);
+    }
 
     /* Letter */
     .letter{
       position:absolute;
       left:50%;
-      bottom: 34px;
-      width: 280px;
-      height: 185px;
-      transform: translateX(-50%) translateY(28px);
-      background: linear-gradient(180deg, #ffffff, var(--paper));
-      border-radius: 14px;
-      box-shadow: 0 12px 16px rgba(0,0,0,.12);
-      border: 1px solid rgba(230,58,141,.22);
+      top: 28px;
+      width: 270px;
+      height: 160px;
+      transform: translateX(-50%) translateY(30px);
+      border-radius: 18px;
+      background: var(--paper);
+      border: 3px solid #2b66ff;
+      box-shadow: 0 18px 22px rgba(0,0,0,.18);
       z-index: 10;
-      opacity:0;
-      pointer-events:none;
-      transition:
-        transform 900ms cubic-bezier(.2,.9,.1,1),
-        opacity 350ms ease;
-      display:grid;
-      place-items:center;
-      padding: 16px;
-      cursor:pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 900ms cubic-bezier(.2,.9,.2,1), opacity 500ms ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 16px 16px 14px;
     }
 
-    .letter .hint{
-      font-size: 13px;
-      color: rgba(138,43,91,.7);
-      letter-spacing: .2px;
+    /* When envelope opens, letter is visible but still "locked message stage" */
+    .envelope.open .letter{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(-54px); /* up and in front of flap */
     }
 
-    .letter .msg{
-      margin-top: 10px;
-      font-size: 22px;
-      font-weight: 700;
+    .letter-content{
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap: 12px;
       color: var(--ink);
-      line-height: 1.2;
-      opacity:0;
-      transform: translateY(6px);
-      transition: opacity 400ms ease, transform 400ms ease;
-      text-align:center;
+      line-height:1.15;
     }
 
-    .letter.revealed .msg{
-      opacity:1;
-      transform: translateY(0);
-    }
-    .letter.revealed .hint{ opacity:.25; }
-
-    /* Open state */
-    .open .flap{
-      transform: rotateX(165deg);
-    }
-    .open .seal{
-      opacity:0;
-      transform: translate(-50%,-50%) rotate(45deg) scale(.85);
-    }
-    .open .letter{
-      opacity:1;
-      pointer-events:auto;
-      transform: translateX(-50%) translateY(-40px);
+    .letter h2{
+      margin:0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
-    /* Buttons */
+    .btnrow{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      margin-top: 2px;
+      position:relative;
+    }
+
+    .mini-btn{
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor:pointer;
+      box-shadow: 0 10px 16px rgba(0,0,0,.12);
+      transition: transform 150ms ease, filter 150ms ease;
+      user-select:none;
+    }
+    .mini-btn:active{ transform: scale(.98); }
+
+    .accept{
+      background: #ff2e8f;
+      color: #fff;
+    }
+
+    .reject{
+      background: #ffd3e9;
+      color: #9a2b60;
+      position: relative;
+    }
+
+    /* Controls */
     .controls{
       display:flex;
-      gap:10px;
+      gap: 14px;
       justify-content:center;
-      margin-top: 12px;
+      margin-top: 18px;
     }
-    button{
-      appearance:none;
-      border:none;
+    .pill{
+      border: 0;
+      padding: 14px 22px;
       border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 700;
+      font-weight: 800;
       cursor:pointer;
-      background: #ff2f84;
-      color:white;
-      box-shadow: 0 10px 16px rgba(0,0,0,.12);
-      transition: transform 120ms ease, filter 120ms ease, opacity 200ms ease;
+      box-shadow: 0 14px 22px rgba(0,0,0,.12);
+      transition: transform 150ms ease, filter 150ms ease;
     }
-    button:hover{ filter: brightness(1.05); }
-    button:active{ transform: translateY(1px) scale(.99); }
-    button.secondary{
-      background: rgba(255,47,132,.18);
-      color: #b21f63;
-      box-shadow: none;
-      border: 1px solid rgba(178,31,99,.25);
+    .pill.primary{ background: var(--accent); color:#fff; }
+    .pill.ghost{ background: rgba(255,255,255,.55); border: 2px solid rgba(255,46,143,.25); color:#9a2b60; }
+    .pill:active{ transform: scale(.98); }
+
+    /* Code lock under stage */
+    .lock{
+      margin-top: 8px;
+      display:grid;
+      gap: 10px;
+      justify-items:center;
     }
-    button:disabled{
-      opacity:.55;
-      cursor:not-allowed;
+    .hint{
+      margin:0;
+      font-size: 14px;
+      opacity:.85;
+      max-width: 520px;
+    }
+    .lockline{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    #codeInput{
+      padding: 12px 12px;
+      width: 240px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,46,143,.45);
+      outline: none;
+      font-weight: 700;
+      background: rgba(255,255,255,.7);
+    }
+    #unlockBtn{
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 0;
+      background: #ff2e8f;
+      color:#fff;
+      font-weight: 900;
+      cursor:pointer;
+      box-shadow: 0 12px 18px rgba(0,0,0,.12);
+    }
+    #wrong{
+      margin:0;
+      font-size: 13px;
+      color: #b0003a;
+      min-height: 16px;
     }
 
-    /* Floating hearts */
-    .heart{
-      position:absolute;
-      left:50%;
-      top: 98px; /* around flap */
-      width: 16px;
-      height: 16px;
-      transform: translate(-50%,-50%) rotate(45deg);
-      background: #ff2f84;
-      border-radius: 4px;
+    /* Rain */
+    #rain{
+      position: fixed;
+      inset: 0;
       pointer-events:none;
-      opacity:0;
-      will-change: transform, opacity;
-      z-index: 20;
-      filter: drop-shadow(0 10px 10px rgba(0,0,0,.12));
+      overflow:hidden;
+      z-index: 50;
     }
-    .heart::before,.heart::after{
+    .fall-item{
+      position:absolute;
+      top: -40px;
+      left: 50%;
+      opacity: 0;
+      will-change: transform, opacity;
+      animation: fallDown var(--dur) linear var(--delay) forwards;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
+    }
+    .fall-heart{
+      font-size: 22px;
+    }
+    .fall-ball{
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #d8ff4d;
+      box-shadow: inset 0 -3px 0 rgba(0,0,0,.12), 0 10px 14px rgba(0,0,0,.10);
+      position: relative;
+    }
+    .fall-ball::before, .fall-ball::after{
       content:"";
       position:absolute;
-      width: 16px;
-      height: 16px;
-      background:#ff2f84;
+      inset: 3px;
+      border: 2px solid rgba(255,255,255,.85);
+      border-left-color: transparent;
+      border-right-color: transparent;
       border-radius: 50%;
+      transform: rotate(35deg);
     }
-    .heart::before{ left:-8px; top:0; }
-    .heart::after{ left:0; top:-8px; }
-
-    @keyframes floatUp {
-      0%   { opacity: 0; transform: translate(var(--x0), var(--y0)) rotate(45deg) scale(var(--s)); }
+    @keyframes fallDown{
+      0%   { opacity: 0; transform: translate(var(--x), -40px) rotate(var(--r)); }
       10%  { opacity: 1; }
-      100% { opacity: 0; transform: translate(var(--x1), var(--y1)) rotate(45deg) scale(calc(var(--s) * 1.12)); }
-    }
-
-    /* Tiny footer */
-    .tiny{
-      margin-top: 14px;
-      font-size: 12px;
-      color: rgba(138,43,91,.55);
+      100% { opacity: 0; transform: translate(var(--x), calc(100vh + 60px)) rotate(calc(var(--r) + 240deg)); }
     }
   </style>
 </head>
+
 <body>
+  <div id="rain"></div>
+
   <div class="wrap">
-    <div class="stage" aria-label="Valentine envelope">
+    <div class="stage" id="stage">
+      <!-- Photos (hidden until accept/reject outcome) -->
+      <div class="photo-ring" id="photos">
+        <!-- These are your couple photos -->
+        <img src="assets/p1.jpg" class="photo p1" alt="">
+        <img src="assets/p2.jpg" class="photo p2" alt="">
+        <img src="assets/p3.jpg" class="photo p3" alt="">
+        <img src="assets/p4.jpg" class="photo p4" alt="">
+        <img src="assets/p5.jpg" class="photo p5" alt="">
+      </div>
+
       <div class="envelope" id="envelope">
-        <div class="letter" id="letter" role="button" tabindex="0" aria-label="Open letter">
-          <div>
-            <div class="hint">Tap the letter</div>
-            <div class="msg" id="msg">happy valentines! I love you x</div>
+        <div class="letter" id="letter">
+          <div class="letter-content" id="letterContent">
+            <h2 id="letterTitle">congratulations! you have won a certificate for 1000 kisses💋</h2>
+
+            <div class="btnrow" id="choiceRow">
+              <button class="mini-btn accept" id="acceptBtn" type="button">Accept</button>
+              <button class="mini-btn reject" id="rejectBtn" type="button">Reject</button>
+            </div>
           </div>
         </div>
 
-        <div class="env-back"></div>
-        <div class="env-left"></div>
-        <div class="env-right"></div>
-        <div class="env-body"></div>
-
         <div class="flap"></div>
-        <div class="seal"></div>
+        <div class="env-body">
+          <div class="env-inner"></div>
+        </div>
       </div>
     </div>
 
-    <div class="controls">
-      <button id="openBtn">Open</button>
-      <button id="resetBtn" class="secondary">Reset</button>
+    <!-- Code lock -->
+    <div class="lock" id="lockBox">
+      <p class="hint">
+        “i am <em>sinkinggg</em>… u should know the code.<br>
+        Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters”
+      </p>
+
+      <div class="lockline">
+        <input id="codeInput" type="password" placeholder="enter the secret code…" autocomplete="off" />
+        <button id="unlockBtn" type="button">Unlock</button>
+      </div>
+
+      <p id="wrong"></p>
     </div>
 
-    <div class="tiny">💗</div>
+    <div class="controls">
+      <button class="pill ghost" id="resetBtn" type="button">Reset</button>
+    </div>
   </div>
 
   <script>
-    const envelope = document.getElementById('envelope');
-    const openBtn  = document.getElementById('openBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const letter   = document.getElementById('letter');
-    const msg      = document.getElementById('msg');
+    const CORRECT_CODE = "sweetheart";
 
-    let isOpen = false;
-    let heartsBurstDone = false;
+    const envelope = document.getElementById("envelope");
+    const letter = document.getElementById("letter");
+    const letterTitle = document.getElementById("letterTitle");
+    const choiceRow = document.getElementById("choiceRow");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const rejectBtn = document.getElementById("rejectBtn");
 
-    function rand(min, max){ return Math.random() * (max - min) + min; }
+    const lockBox = document.getElementById("lockBox");
+    const codeInput = document.getElementById("codeInput");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const wrong = document.getElementById("wrong");
 
-    function spawnHearts(count = 18){
-      const stage = envelope.parentElement; // .stage
-      const rect = envelope.getBoundingClientRect();
+    const photos = document.getElementById("photos");
+    const stage = document.getElementById("stage");
 
-      for(let i=0;i<count;i++){
-        const h = document.createElement('div');
-        h.className = 'heart';
+    const rain = document.getElementById("rain");
+    let unlocked = false;
+    let decisionMade = false;
 
-        // Start near the top center of the envelope
-        const startX = rect.left + rect.width * 0.5;
-        const startY = rect.top + rect.height * 0.33;
+    function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-        // Random travel
-        const dx = rand(-130, 130);
-        const dy = rand(-220, -120);
+    function resetAll(){
+      unlocked = false;
+      decisionMade = false;
 
-        // Slight variation per heart
-        const s  = rand(0.85, 1.6);
-        const x0 = `${rand(-6,6)}px`;
-        const y0 = `${rand(-6,6)}px`;
+      envelope.classList.remove("open");
+      photos.classList.remove("show");
 
-        // Set CSS variables for animation
-        h.style.setProperty('--s',  s);
-        h.style.setProperty('--x0', x0);
-        h.style.setProperty('--y0', y0);
-        h.style.setProperty('--x1', `${dx}px`);
-        h.style.setProperty('--y1', `${dy}px`);
+      // restore couple photos by default (accept path)
+      setPhotoSet("couple");
 
-        // Position the heart in the document (absolute)
-        h.style.position = 'fixed';
-        h.style.left = `${startX}px`;
-        h.style.top  = `${startY}px`;
+      // reset letter content (hidden until open)
+      letterTitle.textContent = "congratulations! you have won a certificate for 1000 kisses💋";
+      choiceRow.style.display = "flex";
 
-        const dur = rand(900, 1500);
-        const delay = rand(0, 220);
+      wrong.textContent = "";
+      codeInput.value = "";
+      codeInput.disabled = false;
+      unlockBtn.disabled = false;
 
-        h.style.animation = `floatUp ${dur}ms ease-out ${delay}ms forwards`;
+      // stop rain
+      rain.innerHTML = "";
 
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), dur + delay + 50);
-      }
+      // reset reject button position
+      resetRejectPosition();
     }
 
     function openEnvelope(){
-      if(isOpen) return;
-      isOpen = true;
+      envelope.classList.add("open");
+    }
 
-      envelope.classList.add('open');
+    function shower(countHearts = 65, countBalls = 45){
+      const total = countHearts + countBalls;
+      for(let i=0;i<total;i++){
+        const el = document.createElement("div");
+        el.className = "fall-item";
 
-      // hearts only once per open (until reset)
-      if(!heartsBurstDone){
-        heartsBurstDone = true;
-        spawnHearts(22);
-        // a second smaller burst for “cute” effect
-        setTimeout(() => spawnHearts(10), 180);
+        const isBall = i >= countHearts;
+        if(isBall){
+          const b = document.createElement("div");
+          b.className = "fall-ball";
+          el.appendChild(b);
+        } else {
+          const h = document.createElement("div");
+          h.className = "fall-heart";
+          h.textContent = "♥";
+          el.appendChild(h);
+        }
+
+        el.style.setProperty("--x", `${rand(-48, 48)}vw`);
+        el.style.setProperty("--r", `${rand(-50, 50)}deg`);
+        el.style.setProperty("--dur", `${rand(1500, 2600)}ms`);
+        el.style.setProperty("--delay", `${rand(0, 550)}ms`);
+
+        rain.appendChild(el);
+
+        // cleanup
+        const cleanupMs = 3200;
+        setTimeout(() => el.remove(), cleanupMs);
       }
     }
 
-    function resetAll(){
-      isOpen = false;
-      heartsBurstDone = false;
-      envelope.classList.remove('open');
-      letter.classList.remove('revealed');
-    }
+    function setPhotoSet(mode){
+      // mode: "couple" or "cats"
+      const imgs = photos.querySelectorAll("img.photo");
 
-    function revealText(){
-      if(!isOpen) return; // only reveal after open
-      letter.classList.toggle('revealed');
-    }
-
-    openBtn.addEventListener('click', openEnvelope);
-    resetBtn.addEventListener('click', resetAll);
-
-    letter.addEventListener('click', revealText);
-    letter.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        revealText();
+      if(mode === "cats"){
+        const sources = ["assets/cat1.jpg","assets/cat2.jpg","assets/cat3.jpg","assets/cat1.jpg","assets/cat2.jpg"];
+        imgs.forEach((img, idx) => img.src = sources[idx] || sources[0]);
+      } else {
+        const sources = ["assets/p1.jpg","assets/p2.jpg","assets/p3.jpg","assets/p4.jpg","assets/p5.jpg"];
+        imgs.forEach((img, idx) => img.src = sources[idx] || sources[0]);
       }
+    }
+
+    // Unlock flow (code must be correct to open)
+    function tryUnlock(){
+      const val = (codeInput.value || "").trim().toLowerCase();
+      if(val === CORRECT_CODE){
+        unlocked = true;
+        wrong.textContent = "";
+        codeInput.disabled = true;
+        unlockBtn.disabled = true;
+
+        openEnvelope();
+        shower(); 
+      } else {
+        wrong.textContent = "nope. try again :)";
+      }
+    }
+
+    unlockBtn.addEventListener("click", tryUnlock);
+    codeInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") tryUnlock();
     });
+
+    // Accept / Reject behaviors
+    acceptBtn.addEventListener("click", () => {
+      if(!unlocked || decisionMade) return;
+      decisionMade = true;
+
+      letterTitle.textContent = "yayyy, contact your gf for activation :) \n\nhappy valentines 🫶";
+      choiceRow.style.display = "none";
+
+      // show couple pictures only after accept
+      setPhotoSet("couple");
+      photos.classList.add("show");
+    });
+
+    rejectBtn.addEventListener("click", () => {
+      if(!unlocked || decisionMade) return;
+      decisionMade = true;
+
+      letterTitle.textContent = "think again";
+      choiceRow.style.display = "none";
+
+      // show cat pictures on reject
+      setPhotoSet("cats");
+      photos.classList.add("show");
+    });
+
+    // Make Reject button dodge the cursor
+    function resetRejectPosition(){
+      rejectBtn.style.transform = "";
+      rejectBtn.dataset.tx = "0";
+      rejectBtn.dataset.ty = "0";
+    }
+
+    function moveRejectAway(cursorX, cursorY){
+      const rect = rejectBtn.getBoundingClientRect();
+
+      // distance from cursor to center of button
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      const dx = cursorX - cx;
+      const dy = cursorY - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      const threshold = 90; // how close before it runs
+      if(dist > threshold) return;
+
+      // move direction opposite cursor
+      const push = 80;
+      const angle = Math.atan2(dy, dx);
+      let tx = -Math.cos(angle) * push;
+      let ty = -Math.sin(angle) * push;
+
+      // clamp so it stays near the letter area
+      tx = Math.max(-120, Math.min(120, tx));
+      ty = Math.max(-70, Math.min(70, ty));
+
+      rejectBtn.style.transform = `translate(${tx}px, ${ty}px)`;
+      rejectBtn.dataset.tx = String(tx);
+      rejectBtn.dataset.ty = String(ty);
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      if(!unlocked || decisionMade) return;
+      moveRejectAway(e.clientX, e.clientY);
+    });
+
+    // Reset
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
 
     // Start clean
     resetAll();
   </script>
+
 </body>
 </html>
