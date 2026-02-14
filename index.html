@@ -18,12 +18,12 @@
       --shadow: 0 18px 50px rgba(0,0,0,.18);
       --shadow2: 0 10px 25px rgba(0,0,0,.14);
 
-      /* Responsive sizing */
-      --envW: clamp(260px, 34vw, 430px);
+      /* Responsive sizing (slightly smaller so it fits better) */
+      --envW: clamp(240px, 31vw, 395px);
       --envH: calc(var(--envW) * 0.62);
 
-      --letterW: clamp(320px, 52vw, 720px);
-      --photoW: clamp(140px, 16vw, 230px);
+      --letterW: clamp(300px, 50vw, 660px);
+      --photoW: clamp(125px, 14vw, 210px);
     }
 
     *{ box-sizing:border-box; }
@@ -38,15 +38,14 @@
         linear-gradient(180deg, var(--bg1), var(--bg2));
     }
 
-    /* Center nicely on laptop + still fits on phone */
     .page{
       min-height:100vh;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      padding: 28px 16px 36px;
-      gap: 18px;
+      padding: 22px 16px 34px;
+      gap: 16px;
     }
 
     .stage{
@@ -55,7 +54,7 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap: 14px;
+      gap: 12px;
     }
 
     /* ===== ENVELOPE ===== */
@@ -64,7 +63,7 @@
       height: var(--envH);
       position: relative;
       filter: drop-shadow(var(--shadow));
-      margin-top: 6px;
+      margin-top: 10px; /* lower a bit */
     }
 
     .env{
@@ -116,7 +115,6 @@
       z-index: 3;
     }
 
-    /* Closed by default. Only open after unlock */
     .opened .flap-top{
       transform: rotateX(180deg);
       filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
@@ -126,7 +124,7 @@
     .letter{
       position:absolute;
       left:50%;
-      bottom: 12%;
+      bottom: 10%;
       transform: translateX(-50%);
       width: var(--letterW);
       max-width: 94vw;
@@ -135,31 +133,30 @@
       border: 5px solid var(--blue);
       border-radius: 22px;
       box-shadow: var(--shadow2);
-      padding: clamp(16px, 2.2vw, 26px);
+      padding: clamp(16px, 2.2vw, 24px);
       text-align:center;
 
       transition: transform 700ms cubic-bezier(.2,.9,.2,1), bottom 700ms cubic-bezier(.2,.9,.2,1), opacity 250ms;
       z-index: 6;
 
-      /* IMPORTANT: do NOT show letter on the front look */
       opacity: 0;
       pointer-events: none;
     }
 
-    /* show letter only when "unlocked/open" */
     .showLetter .letter{
       opacity: 1;
       pointer-events: auto;
     }
 
+    /* lower + slightly less jump up */
     .opened.showLetter .letter{
-      bottom: 52%;
-      transform: translateX(-50%) translateY(-10%);
+      bottom: 46%;
+      transform: translateX(-50%) translateY(-6%);
     }
 
     .title{
       font-weight: 900;
-      font-size: clamp(26px, 3.8vw, 52px);
+      font-size: clamp(24px, 3.6vw, 48px);
       line-height: 1.05;
       color:#7a314e;
       margin: 0 0 10px 0;
@@ -220,7 +217,14 @@
       line-height: 1.3;
       margin: 0;
     }
-    .hint em{ font-style: italic; font-weight: 800; }
+
+    /* sinkingggg cursive + italic, NOT bold */
+    .sinking{
+      font-family: "Brush Script MT","Segoe Script","Apple Chancery",cursive;
+      font-style: italic;
+      font-weight: 400; /* not bold */
+      letter-spacing: .2px;
+    }
 
     .inputRow{
       width:min(900px, 92vw);
@@ -268,12 +272,12 @@
 
     .hidden{ display:none !important; }
 
-    /* ===== PHOTOS (NOT BEHIND LETTER) ===== */
+    /* ===== PHOTOS (IN FREE SPACE) ===== */
     .photos{
       position:absolute;
       inset:0;
       pointer-events:none;
-      z-index: 2; /* behind letter but visible in free space */
+      z-index: 2;
     }
     .photo{
       width: var(--photoW);
@@ -294,17 +298,17 @@
       display:block;
     }
 
-    /* Accept layout: 3 LEFT, 2 RIGHT */
-    .accL1{ left: clamp(10px, 2vw, 24px); top: 10%; --rot:-7deg; }
-    .accL2{ left: clamp(16px, 2.6vw, 32px); top: 44%; --rot:6deg; }
-    .accL3{ left: clamp(10px, 2vw, 24px); top: 72%; --rot:-6deg; }
+    /* Accept layout: 3 LEFT, 2 RIGHT (spread a bit more) */
+    .accL1{ left: clamp(8px, 1.8vw, 22px); top: 8%; --rot:-7deg; }
+    .accL2{ left: clamp(14px, 2.4vw, 30px); top: 40%; --rot:6deg; }
+    .accL3{ left: clamp(8px, 1.8vw, 22px); top: 72%; --rot:-6deg; }
 
-    .accR1{ right: clamp(10px, 2vw, 24px); top: 14%; --rot:7deg; }
-    .accR2{ right: clamp(10px, 2vw, 24px); top: 56%; --rot:-5deg; }
+    .accR1{ right: clamp(8px, 1.8vw, 22px); top: 12%; --rot:7deg; }
+    .accR2{ right: clamp(8px, 1.8vw, 22px); top: 54%; --rot:-5deg; }
 
     /* Reject cats layout */
-    .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
-    .rej2{ right: clamp(10px, 3vw, 34px); top: 18%; --rot:6deg; }
+    .rej1{ left: clamp(10px, 3vw, 34px); top: 16%; --rot:-6deg; }
+    .rej2{ right: clamp(10px, 3vw, 34px); top: 16%; --rot:6deg; }
     .rej3{ left: 50%; transform: translateX(-50%) rotate(-2deg); top: 66%; }
 
     /* ===== FALLING EMOJIS ===== */
@@ -331,16 +335,21 @@
     /* ===== Mobile: keep it fitting ===== */
     @media (max-width: 700px){
       :root{
-        --envW: clamp(240px, 70vw, 340px);
+        --envW: clamp(230px, 72vw, 330px);
         --letterW: min(92vw, 520px);
-        --photoW: clamp(120px, 38vw, 170px);
+        --photoW: clamp(110px, 34vw, 160px);
       }
 
-      /* photos stack better on small screens */
+      .opened.showLetter .letter{
+        bottom: 44%;
+        transform: translateX(-50%) translateY(-4%);
+      }
+
+      /* 3 left / 2 right but stack cleaner */
       .accL1{ left: 10px; top: 8%; }
       .accR1{ right: 10px; top: 8%; }
-      .accL2{ left: 10px; top: 48%; }
-      .accR2{ right: 10px; top: 48%; }
+      .accL2{ left: 10px; top: 46%; }
+      .accR2{ right: 10px; top: 46%; }
       .accL3{
         left: 50%;
         transform: translateX(-50%) rotate(-4deg);
@@ -381,12 +390,12 @@
       <!-- code input (FRONT SCREEN) -->
       <div class="codeBox" id="codeBox">
         <p class="hint" id="hint">
-          “i am <em>sinkingggg</em>.. u should know the code.<br/>
+          “i am <span class="sinking">sinkingggg</span>.. u should know the code.<br/>
           Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters”
         </p>
 
         <div class="inputRow" id="inputRow">
-          <!-- visible letters (as you wanted) -->
+          <!-- visible letters -->
           <input id="codeInput" type="text" autocomplete="off" spellcheck="false" />
           <button class="unlock" id="unlockBtn" type="button">Unlock</button>
         </div>
@@ -442,7 +451,7 @@
 
     // Reject dodge control (dodges a bit, but still clickable)
     let dodgeCount = 0;
-    const MAX_DODGES = 2;
+    const MAX_DODGES = 3;
 
     // ===== HELPERS =====
     function setButtonsEnabled(enabled){
@@ -512,10 +521,12 @@
       setTimeout(() => { confetti.innerHTML = ""; }, durationMs);
     }
 
-    function removeRejectAbsolutePosition(){
+    function resetRejectPosition(){
+      dodgeCount = 0;
       rejectBtn.style.position = "";
       rejectBtn.style.left = "";
       rejectBtn.style.top = "";
+      rejectBtn.style.transform = "translate(0,0)";
     }
 
     // ===== ACTIONS =====
@@ -527,7 +538,7 @@
         unlocked = true;
         setButtonsEnabled(true);
 
-        // now we open + show the letter popup (THIS is the moment it appears)
+        // show letter + open envelope only after correct code
         openEnvelopeAndShowLetter();
 
         // falling hearts + tennis balls when the letter pops up
@@ -551,14 +562,16 @@
       // only reset button should remain
       btnRow.classList.add("hidden");
 
-      // no need for code section anymore
+      // remove code line + input after accept
       codeBox.classList.add("hidden");
 
-      // show couple photos 3 left / 2 right
+      // show couple photos (3 left / 2 right)
       showPhotos(COUPLE_PHOTOS);
 
       // hearts + tennis again on accept
       spawnConfetti(2600);
+
+      resetRejectPosition();
     }
 
     function handleReject(){
@@ -569,14 +582,16 @@
 
       letterText.textContent = "think again";
 
-      // keep Accept visible (so he can change his mind), and Reject too
+      // keep buttons so he can still accept later
       btnRow.classList.remove("hidden");
 
-      // no need for code section anymore
+      // remove code line + input after reject
       codeBox.classList.add("hidden");
 
       // show cat pics
       showPhotos(CAT_PHOTOS);
+
+      resetRejectPosition();
     }
 
     function resetAll(){
@@ -600,7 +615,7 @@
       closeEnvelopeAndHideLetter();
       setButtonsEnabled(false);
 
-      removeRejectAbsolutePosition();
+      resetRejectPosition();
     }
 
     // ===== REJECT DODGE (still clickable) =====
@@ -608,25 +623,20 @@
       if(!unlocked) return;
       if(accepted) return;
 
-      // dodge only a couple times, then stop so it becomes easy to click
+      // dodge a few times only, then stop so it becomes easy to click
       if(dodgeCount >= MAX_DODGES) return;
 
-      const btn = rejectBtn;
-      const letter = document.getElementById("letter");
-      const lrect = letter.getBoundingClientRect();
-      const brect = btn.getBoundingClientRect();
+      const row = btnRow.getBoundingClientRect();
+      const btn = rejectBtn.getBoundingClientRect();
 
-      // move within the button row area (so it’s still reachable)
-      const pad = 8;
-      const maxX = Math.max(0, lrect.width - brect.width - pad*2);
+      // keep inside the row area
+      const pad = 6;
+      const maxX = Math.max(0, row.width - btn.width - pad*2);
       const x = pad + Math.random() * maxX;
 
-      // keep it near the bottom of the letter
-      const y = 8;
-
-      btn.style.position = "absolute";
-      btn.style.left = x + "px";
-      btn.style.top = y + "px";
+      rejectBtn.style.position = "absolute";
+      rejectBtn.style.left = x + "px";
+      rejectBtn.style.top = "0px";
 
       dodgeCount++;
     }
@@ -647,6 +657,7 @@
   </script>
 </body>
 </html>
+
 
 
 
