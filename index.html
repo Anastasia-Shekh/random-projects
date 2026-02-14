@@ -1,242 +1,633 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>💌</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💌</title>
 
-<style>
-:root{
-  --bg1:#fde6f1;
-  --bg2:#f7d6e8;
-  --card:#fff6fb;
-  --ink:#3b2a2f;
-  --blue:#2d64ff;
-  --pink:#ff4fa3;
-  --pink2:#ff8cc3;
+  <style>
+    :root{
+      --bg1:#fde6f1;
+      --bg2:#f7d6e8;
+      --card:#fff6fb;
+      --ink:#3b2a2f;
+      --blue:#2d64ff;
+      --pink:#ff4fa3;
+      --pink2:#ff8cc3;
 
-  --shadow: 0 18px 50px rgba(0,0,0,.18);
-  --shadow2: 0 10px 25px rgba(0,0,0,.14);
+      --shadow: 0 18px 50px rgba(0,0,0,.18);
+      --shadow2: 0 10px 25px rgba(0,0,0,.14);
 
-  --envW: clamp(260px, 34vw, 430px);
-  --envH: calc(var(--envW) * 0.62);
+      /* Responsive sizing */
+      --envW: clamp(260px, 34vw, 430px);
+      --envH: calc(var(--envW) * 0.62);
 
-  --letterW: clamp(320px, 52vw, 720px);
-  --photoW: clamp(140px, 16vw, 230px);
-}
+      --letterW: clamp(320px, 52vw, 720px);
+      --photoW: clamp(140px, 16vw, 230px);
+    }
 
-*{ box-sizing:border-box; }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 50% 12%, #ffffff55 0%, transparent 65%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+    }
 
-body{
-  margin:0;
-  min-height:100vh;
-  overflow-x:hidden;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  color:var(--ink);
-  background:
-    radial-gradient(1200px 600px at 50% 12%, #ffffff55 0%, transparent 65%),
-    linear-gradient(180deg, var(--bg1), var(--bg2));
-}
+    /* Center nicely on laptop + still fits on phone */
+    .page{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 16px 36px;
+      gap: 18px;
+    }
 
-.page{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:28px 16px 36px;
-  gap:18px;
-}
+    .stage{
+      width: min(1100px, 100%);
+      position: relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 14px;
+    }
 
-.stage{
-  width:min(1100px,100%);
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
-}
+    /* ===== ENVELOPE ===== */
+    .envelopeWrap{
+      width: var(--envW);
+      height: var(--envH);
+      position: relative;
+      filter: drop-shadow(var(--shadow));
+      margin-top: 6px;
+    }
 
-/* ===== ENVELOPE ===== */
+    .env{
+      position:absolute;
+      inset:0;
+      border-radius: 26px;
+      background: linear-gradient(180deg, #ff5aa8, #d9367a);
+      overflow: visible;
+    }
 
-.envelopeWrap{
-  width:var(--envW);
-  height:var(--envH);
-  position:relative;
-  filter:drop-shadow(var(--shadow));
-  margin-top:6px;
-}
+    .flap-left, .flap-right{
+      position:absolute; top:0; bottom:0; width:50%;
+      opacity:.18; pointer-events:none;
+    }
+    .flap-left{
+      left:0;
+      background: linear-gradient(135deg, #fff 0%, transparent 60%);
+      clip-path: polygon(0 0, 100% 50%, 0 100%, 0 0);
+    }
+    .flap-right{
+      right:0;
+      background: linear-gradient(225deg, #fff 0%, transparent 60%);
+      clip-path: polygon(100% 0, 0 50%, 100% 100%, 100% 0);
+    }
+    .flap-bottom{
+      position:absolute;
+      left:0; right:0;
+      bottom:-2px;
+      height:55%;
+      opacity:.18;
+      background: linear-gradient(0deg, #000 0%, transparent 70%);
+      clip-path: polygon(0 100%, 50% 10%, 100% 100%, 0 100%);
+      pointer-events:none;
+    }
 
-.env{
-  position:absolute;
-  inset:0;
-  border-radius:26px;
-  background:linear-gradient(180deg,#ff5aa8,#d9367a);
-  overflow:visible;
-}
+    .flap-top{
+      position:absolute;
+      left:0; right:0;
+      top:-1px;
+      height:62%;
+      background: linear-gradient(180deg, #ff79bd, #ff5aa8);
+      clip-path: polygon(0 0, 50% 92%, 100% 0, 0 0);
+      transform-origin: 50% 0%;
+      transform: rotateX(0deg);
+      transition: transform 700ms cubic-bezier(.2,.9,.2,1), filter 700ms;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.18));
+      border-top-left-radius:26px;
+      border-top-right-radius:26px;
+      z-index: 3;
+    }
 
-.flap-left,.flap-right{
-  position:absolute;
-  top:0;bottom:0;width:50%;
-  opacity:.18;
-}
+    /* Closed by default. Only open after unlock */
+    .opened .flap-top{
+      transform: rotateX(180deg);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
+    }
 
-.flap-left{
-  left:0;
-  background:linear-gradient(135deg,#fff 0%,transparent 60%);
-  clip-path:polygon(0 0,100% 50%,0 100%,0 0);
-}
+    /* ===== LETTER (HIDDEN ON FRONT) ===== */
+    .letter{
+      position:absolute;
+      left:50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+      width: var(--letterW);
+      max-width: 94vw;
 
-.flap-right{
-  right:0;
-  background:linear-gradient(225deg,#fff 0%,transparent 60%);
-  clip-path:polygon(100% 0,0 50%,100% 100%,100% 0);
-}
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,245,252,.92));
+      border: 5px solid var(--blue);
+      border-radius: 22px;
+      box-shadow: var(--shadow2);
+      padding: clamp(16px, 2.2vw, 26px);
+      text-align:center;
 
-.flap-bottom{
-  position:absolute;
-  left:0;right:0;bottom:-2px;
-  height:55%;
-  opacity:.18;
-  background:linear-gradient(0deg,#000 0%,transparent 70%);
-  clip-path:polygon(0 100%,50% 10%,100% 100%,0 100%);
-}
+      transition: transform 700ms cubic-bezier(.2,.9,.2,1), bottom 700ms cubic-bezier(.2,.9,.2,1), opacity 250ms;
+      z-index: 6;
 
-.flap-top{
-  position:absolute;
-  left:0;right:0;top:-1px;
-  height:62%;
-  background:linear-gradient(180deg,#ff79bd,#ff5aa8);
-  clip-path:polygon(0 0,50% 92%,100% 0,0 0);
-  transform-origin:50% 0%;
-  transform:rotateX(0deg);
-  transition:transform 700ms cubic-bezier(.2,.9,.2,1);
-  border-top-left-radius:26px;
-  border-top-right-radius:26px;
-  z-index:3;
-}
+      /* IMPORTANT: do NOT show letter on the front look */
+      opacity: 0;
+      pointer-events: none;
+    }
 
-.opened .flap-top{
-  transform:rotateX(180deg);
-}
+    /* show letter only when "unlocked/open" */
+    .showLetter .letter{
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-/* ===== LETTER ===== */
+    .opened.showLetter .letter{
+      bottom: 52%;
+      transform: translateX(-50%) translateY(-10%);
+    }
 
-.letter{
-  position:absolute;
-  left:50%;
-  bottom:12%;
-  transform:translateX(-50%);
-  width:var(--letterW);
-  max-width:94vw;
-  background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,245,252,.92));
-  border:5px solid var(--blue);
-  border-radius:22px;
-  box-shadow:var(--shadow2);
-  padding:clamp(16px,2.2vw,26px);
-  text-align:center;
-  opacity:0;
-  pointer-events:none;
-  transition:bottom 700ms cubic-bezier(.2,.9,.2,1);
-  z-index:6;
-}
+    .title{
+      font-weight: 900;
+      font-size: clamp(26px, 3.8vw, 52px);
+      line-height: 1.05;
+      color:#7a314e;
+      margin: 0 0 10px 0;
+      text-transform: lowercase;
+    }
 
-.showLetter .letter{
-  opacity:1;
-  pointer-events:auto;
-}
+    .btnRow{
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      margin-top: 14px;
+      position:relative;
+      z-index: 50;
+      height: 64px; /* stable space when reject moves */
+    }
 
-.opened.showLetter .letter{
-  bottom:52%;
-}
+    button{
+      border:0;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: clamp(14px, 1.6vw, 18px);
+      padding: 12px 22px;
+      border-radius: 999px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.14);
+      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+      user-select:none;
+    }
+    button:active{ transform: scale(.98); }
 
-.title{
-  font-weight:900;
-  font-size:clamp(26px,3.8vw,52px);
-  line-height:1.05;
-  color:#7a314e;
-  margin:0 0 10px 0;
-}
+    .accept{
+      background: linear-gradient(180deg, var(--pink2), var(--pink));
+      color:white;
+    }
+    .reject{
+      background: rgba(255,255,255,.55);
+      border: 3px solid var(--blue);
+      color:#7a314e;
+      position:relative;
+    }
 
-/* ===== HINT ===== */
+    .disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      filter:saturate(.7);
+    }
 
-.hint{
-  font-size:clamp(14px,2vw,20px);
-  line-height:1.3;
-  margin:0;
-}
+    /* ===== CODE SECTION (ONLY BEFORE ACCEPT/REJECT) ===== */
+    .codeBox{
+      width:min(900px, 92vw);
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 10px;
+    }
+    .hint{
+      font-size: clamp(14px, 2vw, 20px);
+      line-height: 1.3;
+      margin: 0;
+    }
 
-/* ✅ FIXED: italic but NOT bold */
-.hint em{
-  font-style:italic;
-  font-weight:400;
-}
+    /* ✅ ONLY CHANGE: sinkingggg not bold */
+    .hint em{ font-style: italic; font-weight: 400; }
 
-/* ===== BUTTONS ===== */
+    .inputRow{
+      width:min(900px, 92vw);
+      display:flex;
+      gap: 12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    input{
+      width: min(620px, 92vw);
+      font-size: clamp(16px, 2.0vw, 20px);
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 3px solid #ff87bf;
+      outline:none;
+      background: rgba(255,255,255,.7);
+      box-shadow: 0 12px 20px rgba(0,0,0,.10);
+      color:#333;
+    }
+    .unlock{
+      background: linear-gradient(180deg, #ff65b0, #ff3f9b);
+      color:#fff;
+      padding: 16px 24px;
+      border-radius: 18px;
+      box-shadow: 0 14px 26px rgba(0,0,0,.14);
+    }
+    .error{
+      color:#b0003a;
+      font-weight: 800;
+      min-height: 1.2em;
+      margin: 0;
+    }
 
-button{
-  border:0;
-  cursor:pointer;
-  font-weight:800;
-  font-size:clamp(14px,1.6vw,18px);
-  padding:12px 22px;
-  border-radius:999px;
-  box-shadow:0 10px 18px rgba(0,0,0,.14);
-}
+    /* Reset always visible */
+    .reset{
+      margin-top: 4px;
+      background: rgba(255,255,255,.55);
+      border: 3px solid #ffb4d7;
+      color:#7a314e;
+      padding: 14px 26px;
+      z-index: 60;
+      position:relative;
+    }
 
-.accept{
-  background:linear-gradient(180deg,var(--pink2),var(--pink));
-  color:white;
-}
+    .hidden{ display:none !important; }
 
-.reject{
-  background:rgba(255,255,255,.55);
-  border:3px solid var(--blue);
-  color:#7a314e;
-}
+    /* ===== PHOTOS (NOT BEHIND LETTER) ===== */
+    .photos{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index: 2; /* behind letter but visible in free space */
+    }
+    .photo{
+      width: var(--photoW);
+      aspect-ratio: 3/4;
+      background:#fff;
+      border-radius: 18px;
+      padding: 8px;
+      box-shadow: var(--shadow2);
+      position:absolute;
+      overflow:hidden;
+      transform: rotate(var(--rot, 0deg));
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display:block;
+    }
 
-.reset{
-  margin-top:4px;
-  background:rgba(255,255,255,.55);
-  border:3px solid #ffb4d7;
-  color:#7a314e;
-  padding:14px 26px;
-}
+    /* ✅ ONLY CHANGE: spread ACCEPT photos farther apart */
+    .accL1{ left: clamp(14px, 3.6vw, 64px); top: 6%;  --rot:-7deg; }
+    .accL2{ left: clamp(22px, 4.6vw, 84px); top: 40%; --rot:6deg; }
+    .accL3{ left: clamp(14px, 3.6vw, 64px); top: 76%; --rot:-6deg; }
 
-.hidden{display:none !important;}
-</style>
+    .accR1{ right: clamp(14px, 3.6vw, 64px); top: 8%;  --rot:7deg; }
+    .accR2{ right: clamp(14px, 3.6vw, 64px); top: 62%; --rot:-5deg; }
+
+    /* Reject cats layout (unchanged) */
+    .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
+    .rej2{ right: clamp(10px, 3vw, 34px); top: 18%; --rot:6deg; }
+    .rej3{ left: 50%; transform: translateX(-50%) rotate(-2deg); top: 66%; }
+
+    /* ===== FALLING EMOJIS ===== */
+    .confetti{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index: 9999;
+    }
+    .piece{
+      position:absolute;
+      top:-40px;
+      font-size: 22px;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+      opacity:.95;
+      will-change: transform;
+    }
+    @keyframes fall{
+      to { transform: translateY(110vh) rotate(720deg); }
+    }
+
+    /* ===== Mobile: keep it fitting (unchanged) ===== */
+    @media (max-width: 700px){
+      :root{
+        --envW: clamp(240px, 70vw, 340px);
+        --letterW: min(92vw, 520px);
+        --photoW: clamp(120px, 38vw, 170px);
+      }
+
+      /* photos stack better on small screens */
+      .accL1{ left: 10px; top: 8%; }
+      .accR1{ right: 10px; top: 8%; }
+      .accL2{ left: 10px; top: 48%; }
+      .accR2{ right: 10px; top: 48%; }
+      .accL3{
+        left: 50%;
+        transform: translateX(-50%) rotate(-4deg);
+        top: 82%;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="page">
+    <div class="stage" id="stage">
 
-<div class="page">
-  <div class="stage" id="stage">
+      <!-- photos layer -->
+      <div class="photos hidden" id="photos"></div>
 
-    <div class="envelopeWrap">
-      <div class="env" id="env">
-        <div class="flap-left"></div>
-        <div class="flap-right"></div>
-        <div class="flap-bottom"></div>
-        <div class="flap-top"></div>
+      <!-- envelope -->
+      <div class="envelopeWrap" id="envelopeWrap">
+        <div class="env" id="env">
+          <div class="flap-left"></div>
+          <div class="flap-right"></div>
+          <div class="flap-bottom"></div>
+          <div class="flap-top" id="flapTop"></div>
 
-        <div class="letter" id="letter">
-          <h1 class="title">
-            congratulations! you have won a certificate for 1000 kisses 💋
-          </h1>
+          <div class="letter" id="letter">
+            <h1 class="title" id="letterText">
+              congratulations! you have won a certificate for 1000 kisses 💋
+            </h1>
+
+            <div class="btnRow" id="btnRow">
+              <button class="accept disabled" id="acceptBtn" type="button">Accept</button>
+              <button class="reject disabled" id="rejectBtn" type="button">Reject</button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- code input (FRONT SCREEN) -->
+      <div class="codeBox" id="codeBox">
+        <p class="hint" id="hint">
+          “i am <em>sinkingggg</em>.. u should know the code.<br/>
+          Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters”
+        </p>
+
+        <div class="inputRow" id="inputRow">
+          <input id="codeInput" type="text" autocomplete="off" spellcheck="false" />
+          <button class="unlock" id="unlockBtn" type="button">Unlock</button>
+        </div>
+
+        <p class="error" id="errorMsg"></p>
+      </div>
+
+      <button class="reset" id="resetBtn" type="button">Reset</button>
     </div>
-
-    <p class="hint">
-      “i am <em>sinkingggg</em>.. u should know the code.<br/>
-      Hint: it's a cute nickname but you'd think i'm a sarcastic grandma if i say it, 10 letters”
-    </p>
-
-    <button class="reset">Reset</button>
-
   </div>
-</div>
 
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    // ===== SETTINGS =====
+    const CORRECT_CODE = "sweetheart"; // 10 letters
+
+    const COUPLE_PHOTOS = [
+      { src: "assets/p1.jpg", cls: "photo accL1" },
+      { src: "assets/p2.jpg", cls: "photo accL2" },
+      { src: "assets/p3.jpg", cls: "photo accL3" },
+      { src: "assets/p4.jpg", cls: "photo accR1" },
+      { src: "assets/p5.jpg", cls: "photo accR2" },
+    ];
+
+    const CAT_PHOTOS = [
+      { src: "assets/cat1.jpg", cls: "photo rej1" },
+      { src: "assets/cat2.jpg", cls: "photo rej2" },
+      { src: "assets/cat3.jpg", cls: "photo rej3" },
+    ];
+
+    // ===== ELEMENTS =====
+    const stage = document.getElementById("stage");
+    const env = document.getElementById("env");
+    const letterText = document.getElementById("letterText");
+    const btnRow = document.getElementById("btnRow");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const rejectBtn = document.getElementById("rejectBtn");
+
+    const codeBox = document.getElementById("codeBox");
+    const codeInput = document.getElementById("codeInput");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    const photos = document.getElementById("photos");
+    const confetti = document.getElementById("confetti");
+    const resetBtn = document.getElementById("resetBtn");
+
+    // ===== STATE =====
+    let unlocked = false;
+    let accepted = false;
+    let rejected = false;
+
+    // Reject dodge control (dodges a bit, but still clickable)
+    let dodgeCount = 0;
+    const MAX_DODGES = 2;
+
+    // ===== HELPERS =====
+    function setButtonsEnabled(enabled){
+      [acceptBtn, rejectBtn].forEach(b=>{
+        if(enabled){
+          b.classList.remove("disabled");
+          b.disabled = false;
+        }else{
+          b.classList.add("disabled");
+          b.disabled = true;
+        }
+      });
+    }
+
+    function openEnvelopeAndShowLetter(){
+      env.classList.add("opened");
+      stage.classList.add("showLetter");
+    }
+
+    function closeEnvelopeAndHideLetter(){
+      env.classList.remove("opened");
+      stage.classList.remove("showLetter");
+    }
+
+    function clearPhotos(){
+      photos.innerHTML = "";
+      photos.classList.add("hidden");
+    }
+
+    function showPhotos(list){
+      clearPhotos();
+      for(const p of list){
+        const div = document.createElement("div");
+        div.className = p.cls;
+        const img = document.createElement("img");
+        img.src = p.src;
+        img.alt = "";
+        div.appendChild(img);
+        photos.appendChild(div);
+      }
+      photos.classList.remove("hidden");
+    }
+
+    function spawnConfetti(durationMs = 2600){
+      confetti.innerHTML = "";
+      const emojis = ["💗","💖","💞","🎾","💘","🎾","💓"];
+      const count = 70;
+
+      for(let i=0;i<count;i++){
+        const el = document.createElement("div");
+        el.className = "piece";
+        el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.35;
+        const dur = 1.6 + Math.random() * 1.2;
+        const size = 18 + Math.random() * 16;
+
+        el.style.left = left + "vw";
+        el.style.animationDuration = dur + "s";
+        el.style.animationDelay = delay + "s";
+        el.style.fontSize = size + "px";
+        el.style.transform = `translateY(-40px) rotate(${Math.random()*120}deg)`;
+        confetti.appendChild(el);
+      }
+
+      setTimeout(() => { confetti.innerHTML = ""; }, durationMs);
+    }
+
+    function removeRejectAbsolutePosition(){
+      rejectBtn.style.position = "";
+      rejectBtn.style.left = "";
+      rejectBtn.style.top = "";
+    }
+
+    // ===== ACTIONS =====
+    function handleUnlock(){
+      errorMsg.textContent = "";
+      const val = (codeInput.value || "").trim().toLowerCase();
+
+      if(val === CORRECT_CODE){
+        unlocked = true;
+        setButtonsEnabled(true);
+
+        openEnvelopeAndShowLetter();
+        spawnConfetti(2600);
+      }else{
+        unlocked = false;
+        setButtonsEnabled(false);
+        errorMsg.textContent = "wrong code";
+      }
+    }
+
+    function handleAccept(){
+      if(!unlocked) return;
+
+      accepted = true;
+      rejected = false;
+
+      letterText.textContent = "yayyy, contact your gf for activation :) happy valentines 🫶";
+
+      btnRow.classList.add("hidden");
+      codeBox.classList.add("hidden");
+
+      showPhotos(COUPLE_PHOTOS);
+      spawnConfetti(2600);
+    }
+
+    function handleReject(){
+      if(!unlocked) return;
+
+      rejected = true;
+      accepted = false;
+
+      letterText.textContent = "think again";
+
+      btnRow.classList.remove("hidden");
+      codeBox.classList.add("hidden");
+
+      showPhotos(CAT_PHOTOS);
+    }
+
+    function resetAll(){
+      unlocked = false;
+      accepted = false;
+      rejected = false;
+      dodgeCount = 0;
+
+      codeInput.value = "";
+      errorMsg.textContent = "";
+
+      letterText.textContent = "congratulations! you have won a certificate for 1000 kisses 💋";
+
+      btnRow.classList.remove("hidden");
+      codeBox.classList.remove("hidden");
+
+      clearPhotos();
+      confetti.innerHTML = "";
+
+      closeEnvelopeAndHideLetter();
+      setButtonsEnabled(false);
+
+      removeRejectAbsolutePosition();
+    }
+
+    // ===== REJECT DODGE (still clickable) =====
+    function dodgeReject(){
+      if(!unlocked) return;
+      if(accepted) return;
+
+      if(dodgeCount >= MAX_DODGES) return;
+
+      const btn = rejectBtn;
+      const letter = document.getElementById("letter");
+      const lrect = letter.getBoundingClientRect();
+      const brect = btn.getBoundingClientRect();
+
+      const pad = 8;
+      const maxX = Math.max(0, lrect.width - brect.width - pad*2);
+      const x = pad + Math.random() * maxX;
+
+      const y = 8;
+
+      btn.style.position = "absolute";
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+
+      dodgeCount++;
+    }
+
+    // ===== EVENTS =====
+    unlockBtn.addEventListener("click", handleUnlock);
+    codeInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") handleUnlock(); });
+
+    acceptBtn.addEventListener("click", handleAccept);
+    rejectBtn.addEventListener("click", handleReject);
+
+    rejectBtn.addEventListener("mouseenter", dodgeReject);
+
+    resetBtn.addEventListener("click", resetAll);
+
+    // init
+    resetAll();
+  </script>
 </body>
 </html>
 
