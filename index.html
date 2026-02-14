@@ -23,7 +23,9 @@
       --envH: calc(var(--envW) * 0.62);
 
       --letterW: clamp(320px, 52vw, 720px);
-      --photoW: clamp(140px, 16vw, 230px);
+
+      /* CHANGED: slightly smaller photos so they don't pile up */
+      --photoW: clamp(130px, 14.5vw, 210px);
     }
 
     *{ box-sizing:border-box; }
@@ -294,13 +296,38 @@
       display:block;
     }
 
-    /* ===== ACCEPT layout: spread out more (3 LEFT, 2 RIGHT) ===== */
-    .accL1{ left: clamp(10px, 2.2vw, 28px); top: 10%; --rot:-8deg; z-index: 3; }
-    .accL2{ left: clamp(28px, 4.0vw, 60px); top: 44%; --rot:6deg;  z-index: 4; }
-    .accL3{ left: clamp(10px, 2.2vw, 28px); top: 76%; --rot:-6deg; z-index: 3; }
+    /* CHANGED: Accept layout pushed outward + more vertical spacing */
+    .accL1{
+      left: clamp(-40px, -2.2vw, -10px);
+      top: 8%;
+      --rot:-7deg;
+      z-index: 3;
+    }
+    .accL2{
+      left: clamp(-18px, -0.8vw, 10px);
+      top: 42%;
+      --rot:6deg;
+      z-index: 4;
+    }
+    .accL3{
+      left: clamp(-40px, -2.2vw, -10px);
+      top: 78%;
+      --rot:-6deg;
+      z-index: 3;
+    }
 
-    .accR1{ right: clamp(10px, 2.2vw, 28px); top: 14%; --rot:8deg;  z-index: 3; }
-    .accR2{ right: clamp(28px, 4.0vw, 60px); top: 62%; --rot:-6deg; z-index: 4; }
+    .accR1{
+      right: clamp(-40px, -2.2vw, -10px);
+      top: 10%;
+      --rot:7deg;
+      z-index: 3;
+    }
+    .accR2{
+      right: clamp(-18px, -0.8vw, 10px);
+      top: 64%;
+      --rot:-5deg;
+      z-index: 4;
+    }
 
     /* Reject cats layout */
     .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
@@ -525,7 +552,11 @@
       if(val === CORRECT_CODE){
         unlocked = true;
         setButtonsEnabled(true);
+
+        // now we open + show the letter popup (THIS is the moment it appears)
         openEnvelopeAndShowLetter();
+
+        // falling hearts + tennis balls when the letter pops up
         spawnConfetti(2600);
       }else{
         unlocked = false;
@@ -540,11 +571,19 @@
       accepted = true;
       rejected = false;
 
+      // change letter text
       letterText.textContent = "yayyy, contact your gf for activation :) happy valentines 🫶";
+
+      // only reset button should remain
       btnRow.classList.add("hidden");
+
+      // no need for code section anymore
       codeBox.classList.add("hidden");
 
+      // show couple photos 3 left / 2 right
       showPhotos(COUPLE_PHOTOS);
+
+      // hearts + tennis again on accept
       spawnConfetti(2600);
     }
 
@@ -555,9 +594,14 @@
       accepted = false;
 
       letterText.textContent = "think again";
+
+      // keep Accept visible (so he can change his mind), and Reject too
       btnRow.classList.remove("hidden");
+
+      // no need for code section anymore
       codeBox.classList.add("hidden");
 
+      // show cat pics
       showPhotos(CAT_PHOTOS);
     }
 
@@ -578,6 +622,7 @@
       clearPhotos();
       confetti.innerHTML = "";
 
+      // front look must be CLOSED + NO letter popup
       closeEnvelopeAndHideLetter();
       setButtonsEnabled(false);
 
@@ -588,6 +633,8 @@
     function dodgeReject(){
       if(!unlocked) return;
       if(accepted) return;
+
+      // dodge only a couple times, then stop so it becomes easy to click
       if(dodgeCount >= MAX_DODGES) return;
 
       const btn = rejectBtn;
@@ -595,10 +642,12 @@
       const lrect = letter.getBoundingClientRect();
       const brect = btn.getBoundingClientRect();
 
+      // move within the button row area (so it’s still reachable)
       const pad = 8;
       const maxX = Math.max(0, lrect.width - brect.width - pad*2);
       const x = pad + Math.random() * maxX;
 
+      // keep it near the bottom of the letter
       const y = 8;
 
       btn.style.position = "absolute";
