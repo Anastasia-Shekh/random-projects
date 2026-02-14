@@ -296,13 +296,15 @@
       display:block;
     }
 
-    .accL1{ left: 1vw;  top: 12vh; --rot:-16deg; }
-    .accL2{ left: 4vw;  top: 48vh; --rot:12deg; }
-    .accL3{ left: 2vw;  top: 80vh; --rot:-12deg; }
-    .accR1{ right: 1vw;  top: 14vh; --rot:15deg; }
-    .accR2{ right: 4vw;  top: 65vh; --rot:-14deg; }
-
+/* Accept layout: 3 LEFT, 2 RIGHT (tuned) */
+    .accL1{ left: clamp(14px, 2.5vw, 42px); top: 8%;  --rot:-10deg; }
+    .accL2{ left: clamp(40px, 4.5vw, 78px); top: 40%; --rot: 8deg; }
+    .accL3{ left: clamp(18px, 2.8vw, 46px); top: 74%; --rot:-8deg; }
     
+    .accR1{ right: clamp(22px, 3.8vw, 70px); top: 10%; --rot: 10deg; }
+    .accR2{ right: clamp(26px, 4.6vw, 86px); top: 58%; --rot:-9deg; }
+
+
     /* Reject cats layout (unchanged) */
     .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
     .rej2{ right: clamp(10px, 3vw, 34px); top: 18%; --rot:6deg; }
