@@ -9,74 +9,75 @@
     :root{
       --bg1:#fde6f1;
       --bg2:#f7d6e8;
-      --ink:#3b2a2f;
       --card:#fff6fb;
+      --ink:#3b2a2f;
+      --blue:#2d64ff;
       --pink:#ff4fa3;
       --pink2:#ff8cc3;
-      --blue:#2d64ff;
+
       --shadow: 0 18px 50px rgba(0,0,0,.18);
       --shadow2: 0 10px 25px rgba(0,0,0,.14);
-      --radius: 22px;
 
-      /* sizing knobs */
-      --envW: clamp(270px, 40vw, 500px);
-      --letterW: clamp(320px, 56vw, 760px);
-      --photoW: clamp(130px, 18vw, 230px);
+      /* Responsive sizing */
+      --envW: clamp(260px, 34vw, 430px);
+      --envH: calc(var(--envW) * 0.62);
+
+      --letterW: clamp(320px, 52vw, 720px);
+      --photoW: clamp(140px, 16vw, 230px);
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
     body{
       margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--ink);
       background:
         radial-gradient(1200px 600px at 50% 12%, #ffffff55 0%, transparent 65%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      overflow-x:hidden;
     }
 
+    /* Center nicely on laptop + still fits on phone */
     .page{
       min-height:100vh;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:flex-start;
-      padding: clamp(20px, 4vh, 40px) 16px 40px;
-      gap: 14px;
+      justify-content:center;
+      padding: 28px 16px 36px;
+      gap: 18px;
     }
 
     .stage{
-      width:min(1100px, 100%);
-      position:relative;
+      width: min(1100px, 100%);
+      position: relative;
       display:flex;
       flex-direction:column;
       align-items:center;
       gap: 14px;
     }
 
-    /* --- envelope --- */
+    /* ===== ENVELOPE ===== */
     .envelopeWrap{
-      position:relative;
       width: var(--envW);
-      height: calc(var(--envW) * 0.62);
+      height: var(--envH);
+      position: relative;
       filter: drop-shadow(var(--shadow));
-      margin-top: clamp(10px, 2vh, 18px); /* pushes it down */
+      margin-top: 6px;
     }
+
     .env{
       position:absolute;
       inset:0;
       border-radius: 26px;
       background: linear-gradient(180deg, #ff5aa8, #d9367a);
-      overflow:visible;
+      overflow: visible;
     }
 
     .flap-left, .flap-right{
-      position:absolute;
-      top:0; bottom:0;
-      width:50%;
-      opacity:.18;
-      pointer-events:none;
+      position:absolute; top:0; bottom:0; width:50%;
+      opacity:.18; pointer-events:none;
     }
     .flap-left{
       left:0;
@@ -99,7 +100,6 @@
       pointer-events:none;
     }
 
-    /* TOP flap */
     .flap-top{
       position:absolute;
       left:0; right:0;
@@ -113,39 +113,54 @@
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.18));
       border-top-left-radius:26px;
       border-top-right-radius:26px;
+      z-index: 3;
     }
+
+    /* Closed by default. Only open after unlock */
     .opened .flap-top{
       transform: rotateX(180deg);
       filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
     }
 
-    /* letter */
+    /* ===== LETTER (HIDDEN ON FRONT) ===== */
     .letter{
       position:absolute;
       left:50%;
-      bottom: 10%;
+      bottom: 12%;
       transform: translateX(-50%);
       width: var(--letterW);
-      max-width: 92vw;
-      background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,245,252,.92));
+      max-width: 94vw;
+
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,245,252,.92));
       border: 5px solid var(--blue);
-      border-radius: var(--radius);
+      border-radius: 22px;
       box-shadow: var(--shadow2);
-      padding: clamp(16px, 2.4vw, 26px);
+      padding: clamp(16px, 2.2vw, 26px);
       text-align:center;
-      transition: transform 700ms cubic-bezier(.2,.9,.2,1), bottom 700ms cubic-bezier(.2,.9,.2,1);
+
+      transition: transform 700ms cubic-bezier(.2,.9,.2,1), bottom 700ms cubic-bezier(.2,.9,.2,1), opacity 250ms;
       z-index: 6;
+
+      /* IMPORTANT: do NOT show letter on the front look */
+      opacity: 0;
+      pointer-events: none;
     }
-    .opened .letter{
-      bottom: 48%;
+
+    /* show letter only when "unlocked/open" */
+    .showLetter .letter{
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .opened.showLetter .letter{
+      bottom: 52%;
       transform: translateX(-50%) translateY(-10%);
     }
 
     .title{
       font-weight: 900;
-      font-size: clamp(26px, 4.2vw, 54px);
+      font-size: clamp(26px, 3.8vw, 52px);
       line-height: 1.05;
-      letter-spacing: .2px;
       color:#7a314e;
       margin: 0 0 10px 0;
       text-transform: lowercase;
@@ -158,13 +173,14 @@
       margin-top: 14px;
       position:relative;
       z-index: 50;
+      height: 64px; /* stable space when reject moves */
     }
 
     button{
       border:0;
       cursor:pointer;
       font-weight: 800;
-      font-size: clamp(14px, 1.7vw, 18px);
+      font-size: clamp(14px, 1.6vw, 18px);
       padding: 12px 22px;
       border-radius: 999px;
       box-shadow: 0 10px 18px rgba(0,0,0,.14);
@@ -183,17 +199,17 @@
       color:#7a314e;
       position:relative;
     }
+
     .disabled{
       opacity:.45;
       cursor:not-allowed;
       filter:saturate(.7);
     }
 
-    /* --- code section --- */
+    /* ===== CODE SECTION (ONLY BEFORE ACCEPT/REJECT) ===== */
     .codeBox{
       width:min(900px, 92vw);
       text-align:center;
-      margin-top: 6px;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -216,8 +232,7 @@
     }
     input{
       width: min(620px, 92vw);
-      max-width: 92vw;
-      font-size: clamp(16px, 2.1vw, 20px);
+      font-size: clamp(16px, 2.0vw, 20px);
       padding: 16px 18px;
       border-radius: 18px;
       border: 3px solid #ff87bf;
@@ -233,7 +248,6 @@
       border-radius: 18px;
       box-shadow: 0 14px 26px rgba(0,0,0,.14);
     }
-
     .error{
       color:#b0003a;
       font-weight: 800;
@@ -241,8 +255,9 @@
       margin: 0;
     }
 
+    /* Reset always visible */
     .reset{
-      margin-top: 10px;
+      margin-top: 4px;
       background: rgba(255,255,255,.55);
       border: 3px solid #ffb4d7;
       color:#7a314e;
@@ -253,12 +268,12 @@
 
     .hidden{ display:none !important; }
 
-    /* --- photos --- */
+    /* ===== PHOTOS (NOT BEHIND LETTER) ===== */
     .photos{
       position:absolute;
       inset:0;
       pointer-events:none;
-      z-index: 2;
+      z-index: 2; /* behind letter but visible in free space */
     }
     .photo{
       width: var(--photoW);
@@ -279,20 +294,20 @@
       display:block;
     }
 
-    /* ACCEPT layout: 3 LEFT, 2 RIGHT (bigger) */
-    .accL1{ left: clamp(10px, 2vw, 26px); top: clamp(10px, 2vh, 20px); --rot:-7deg; }
-    .accL2{ left: clamp(16px, 3vw, 34px); top: 34%; --rot:6deg; }
-    .accL3{ left: clamp(10px, 2vw, 26px); top: 66%; --rot:-6deg; }
+    /* Accept layout: 3 LEFT, 2 RIGHT */
+    .accL1{ left: clamp(10px, 2vw, 24px); top: 10%; --rot:-7deg; }
+    .accL2{ left: clamp(16px, 2.6vw, 32px); top: 44%; --rot:6deg; }
+    .accL3{ left: clamp(10px, 2vw, 24px); top: 72%; --rot:-6deg; }
 
-    .accR1{ right: clamp(10px, 2vw, 26px); top: clamp(10px, 2vh, 20px); --rot:7deg; }
-    .accR2{ right: clamp(10px, 2vw, 26px); top: 46%; --rot:-5deg; }
+    .accR1{ right: clamp(10px, 2vw, 24px); top: 14%; --rot:7deg; }
+    .accR2{ right: clamp(10px, 2vw, 24px); top: 56%; --rot:-5deg; }
 
-    /* REJECT layout (cats): 3 around center, responsive) */
-    .rej1{ left: clamp(10px, 3vw, 34px); top: 20%; --rot:-6deg; }
-    .rej2{ right: clamp(10px, 3vw, 34px); top: 22%; --rot:6deg; }
-    .rej3{ left: 50%; transform: translateX(-50%) rotate(-2deg); top: 62%; }
+    /* Reject cats layout */
+    .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
+    .rej2{ right: clamp(10px, 3vw, 34px); top: 18%; --rot:6deg; }
+    .rej3{ left: 50%; transform: translateX(-50%) rotate(-2deg); top: 66%; }
 
-    /* confetti */
+    /* ===== FALLING EMOJIS ===== */
     .confetti{
       position: fixed;
       inset: 0;
@@ -313,29 +328,23 @@
       to { transform: translateY(110vh) rotate(720deg); }
     }
 
-    /* mobile: stack photos so it fits */
+    /* ===== Mobile: keep it fitting ===== */
     @media (max-width: 700px){
       :root{
-        --envW: clamp(250px, 70vw, 360px);
+        --envW: clamp(240px, 70vw, 340px);
         --letterW: min(92vw, 520px);
-        --photoW: clamp(110px, 38vw, 170px);
+        --photoW: clamp(120px, 38vw, 170px);
       }
 
-      .opened .letter{
-        bottom: 54%;
-        transform: translateX(-50%) translateY(-10%);
-      }
-
-      .accL1{ left: 10px; top: 6%; }
-      .accR1{ right: 10px; top: 6%; }
-
-      .accL2{ left: 10px; top: 44%; }
-      .accR2{ right: 10px; top: 44%; }
-
+      /* photos stack better on small screens */
+      .accL1{ left: 10px; top: 8%; }
+      .accR1{ right: 10px; top: 8%; }
+      .accL2{ left: 10px; top: 48%; }
+      .accR2{ right: 10px; top: 48%; }
       .accL3{
         left: 50%;
         transform: translateX(-50%) rotate(-4deg);
-        top: 78%;
+        top: 82%;
       }
     }
   </style>
@@ -363,16 +372,13 @@
 
             <div class="btnRow" id="btnRow">
               <button class="accept disabled" id="acceptBtn" type="button">Accept</button>
-
-              <button class="reject disabled" id="rejectBtn" type="button">
-                Reject
-              </button>
+              <button class="reject disabled" id="rejectBtn" type="button">Reject</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- code input -->
+      <!-- code input (FRONT SCREEN) -->
       <div class="codeBox" id="codeBox">
         <p class="hint" id="hint">
           “i am <em>sinkingggg</em>.. u should know the code.<br/>
@@ -380,8 +386,8 @@
         </p>
 
         <div class="inputRow" id="inputRow">
-          <!-- visible text input (as you wanted) -->
-          <input id="codeInput" type="text" placeholder="" autocomplete="off" spellcheck="false" />
+          <!-- visible letters (as you wanted) -->
+          <input id="codeInput" type="text" autocomplete="off" spellcheck="false" />
           <button class="unlock" id="unlockBtn" type="button">Unlock</button>
         </div>
 
@@ -398,16 +404,14 @@
     // ===== SETTINGS =====
     const CORRECT_CODE = "sweetheart"; // 10 letters
 
-    // couple photos (p1..p5)
     const COUPLE_PHOTOS = [
-      { src: "assets/p1.jpg", cls: "photo accL1" }, // left top
-      { src: "assets/p2.jpg", cls: "photo accL2" }, // left middle
-      { src: "assets/p3.jpg", cls: "photo accL3" }, // left bottom
-      { src: "assets/p4.jpg", cls: "photo accR1" }, // right top
-      { src: "assets/p5.jpg", cls: "photo accR2" }, // right middle
+      { src: "assets/p1.jpg", cls: "photo accL1" },
+      { src: "assets/p2.jpg", cls: "photo accL2" },
+      { src: "assets/p3.jpg", cls: "photo accL3" },
+      { src: "assets/p4.jpg", cls: "photo accR1" },
+      { src: "assets/p5.jpg", cls: "photo accR2" },
     ];
 
-    // cat photos (upload these)
     const CAT_PHOTOS = [
       { src: "assets/cat1.jpg", cls: "photo rej1" },
       { src: "assets/cat2.jpg", cls: "photo rej2" },
@@ -415,7 +419,7 @@
     ];
 
     // ===== ELEMENTS =====
-    const envelopeWrap = document.getElementById("envelopeWrap");
+    const stage = document.getElementById("stage");
     const env = document.getElementById("env");
     const letterText = document.getElementById("letterText");
     const btnRow = document.getElementById("btnRow");
@@ -423,8 +427,6 @@
     const rejectBtn = document.getElementById("rejectBtn");
 
     const codeBox = document.getElementById("codeBox");
-    const inputRow = document.getElementById("inputRow");
-    const hint = document.getElementById("hint");
     const codeInput = document.getElementById("codeInput");
     const unlockBtn = document.getElementById("unlockBtn");
     const errorMsg = document.getElementById("errorMsg");
@@ -437,6 +439,10 @@
     let unlocked = false;
     let accepted = false;
     let rejected = false;
+
+    // Reject dodge control (dodges a bit, but still clickable)
+    let dodgeCount = 0;
+    const MAX_DODGES = 2;
 
     // ===== HELPERS =====
     function setButtonsEnabled(enabled){
@@ -451,12 +457,14 @@
       });
     }
 
-    function openEnvelope(){
+    function openEnvelopeAndShowLetter(){
       env.classList.add("opened");
+      stage.classList.add("showLetter");
     }
 
-    function closeEnvelope(){
+    function closeEnvelopeAndHideLetter(){
       env.classList.remove("opened");
+      stage.classList.remove("showLetter");
     }
 
     function clearPhotos(){
@@ -478,7 +486,7 @@
       photos.classList.remove("hidden");
     }
 
-    function spawnConfetti(durationMs = 2300){
+    function spawnConfetti(durationMs = 2600){
       confetti.innerHTML = "";
       const emojis = ["💗","💖","💞","🎾","💘","🎾","💓"];
       const count = 70;
@@ -487,62 +495,43 @@
         const el = document.createElement("div");
         el.className = "piece";
         el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
         const left = Math.random() * 100;
         const delay = Math.random() * 0.35;
         const dur = 1.6 + Math.random() * 1.2;
-        const size = 18 + Math.random()*16;
+        const size = 18 + Math.random() * 16;
 
         el.style.left = left + "vw";
         el.style.animationDuration = dur + "s";
         el.style.animationDelay = delay + "s";
         el.style.fontSize = size + "px";
         el.style.transform = `translateY(-40px) rotate(${Math.random()*120}deg)`;
-
         confetti.appendChild(el);
       }
 
       setTimeout(() => { confetti.innerHTML = ""; }, durationMs);
     }
 
-    // Reject button dodge (but still clickable)
-    // rule: if unlocked, it dodges; but after 2 dodges, it allows hovering/click normally
-    let dodgeCount = 0;
-    function dodgeButton(){
-      if(!unlocked || accepted) return;
-      if(dodgeCount >= 2) return; // allow click after a couple of dodges
-
-      const btn = rejectBtn;
-      const rect = btn.getBoundingClientRect();
-
-      // jump within the letter bounds so it stays reachable
-      const letter = document.getElementById("letter");
-      const lrect = letter.getBoundingClientRect();
-
-      const pad = 12;
-      const maxX = lrect.width - rect.width - pad*2;
-      const maxY = 70; // keep it near the bottom area, not on text
-
-      const x = pad + Math.random()*Math.max(0, maxX);
-      const y = (lrect.height - rect.height - pad) - Math.random()*maxY;
-
-      btn.style.position = "absolute";
-      btn.style.left = x + "px";
-      btn.style.top = y + "px";
-      btnRow.style.position = "relative";
-      btnRow.style.height = "64px";
-
-      dodgeCount++;
+    function removeRejectAbsolutePosition(){
+      rejectBtn.style.position = "";
+      rejectBtn.style.left = "";
+      rejectBtn.style.top = "";
     }
 
     // ===== ACTIONS =====
     function handleUnlock(){
       errorMsg.textContent = "";
       const val = (codeInput.value || "").trim().toLowerCase();
+
       if(val === CORRECT_CODE){
         unlocked = true;
         setButtonsEnabled(true);
-        openEnvelope();
-        errorMsg.textContent = "";
+
+        // now we open + show the letter popup (THIS is the moment it appears)
+        openEnvelopeAndShowLetter();
+
+        // falling hearts + tennis balls when the letter pops up
+        spawnConfetti(2600);
       }else{
         unlocked = false;
         setButtonsEnabled(false);
@@ -552,37 +541,41 @@
 
     function handleAccept(){
       if(!unlocked) return;
+
       accepted = true;
       rejected = false;
 
-      letterText.textContent =
-        "yayyy, contact your gf for activation :) happy valentines 🫶";
+      // change letter text
+      letterText.textContent = "yayyy, contact your gf for activation :) happy valentines 🫶";
 
-      // remove Accept/Reject buttons after accept (only Reset stays)
+      // only reset button should remain
       btnRow.classList.add("hidden");
 
-      // remove code section after accept
+      // no need for code section anymore
       codeBox.classList.add("hidden");
 
-      openEnvelope();
+      // show couple photos 3 left / 2 right
       showPhotos(COUPLE_PHOTOS);
+
+      // hearts + tennis again on accept
       spawnConfetti(2600);
     }
 
     function handleReject(){
       if(!unlocked) return;
+
       rejected = true;
       accepted = false;
 
       letterText.textContent = "think again";
 
-      // keep Accept/Reject visible on reject (so he can still accept later)
+      // keep Accept visible (so he can change his mind), and Reject too
       btnRow.classList.remove("hidden");
 
-      // remove code section after reject
+      // no need for code section anymore
       codeBox.classList.add("hidden");
 
-      openEnvelope();
+      // show cat pics
       showPhotos(CAT_PHOTOS);
     }
 
@@ -595,40 +588,57 @@
       codeInput.value = "";
       errorMsg.textContent = "";
 
-      letterText.textContent =
-        "congratulations! you have won a certificate for 1000 kisses 💋";
+      letterText.textContent = "congratulations! you have won a certificate for 1000 kisses 💋";
 
       btnRow.classList.remove("hidden");
-      btnRow.style.height = "";
-      rejectBtn.style.position = "";
-      rejectBtn.style.left = "";
-      rejectBtn.style.top = "";
-
       codeBox.classList.remove("hidden");
-      closeEnvelope();
+
       clearPhotos();
-      setButtonsEnabled(false);
       confetti.innerHTML = "";
+
+      // front look must be CLOSED + NO letter popup
+      closeEnvelopeAndHideLetter();
+      setButtonsEnabled(false);
+
+      removeRejectAbsolutePosition();
+    }
+
+    // ===== REJECT DODGE (still clickable) =====
+    function dodgeReject(){
+      if(!unlocked) return;
+      if(accepted) return;
+
+      // dodge only a couple times, then stop so it becomes easy to click
+      if(dodgeCount >= MAX_DODGES) return;
+
+      const btn = rejectBtn;
+      const letter = document.getElementById("letter");
+      const lrect = letter.getBoundingClientRect();
+      const brect = btn.getBoundingClientRect();
+
+      // move within the button row area (so it’s still reachable)
+      const pad = 8;
+      const maxX = Math.max(0, lrect.width - brect.width - pad*2);
+      const x = pad + Math.random() * maxX;
+
+      // keep it near the bottom of the letter
+      const y = 8;
+
+      btn.style.position = "absolute";
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+
+      dodgeCount++;
     }
 
     // ===== EVENTS =====
     unlockBtn.addEventListener("click", handleUnlock);
-    codeInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter") handleUnlock();
-    });
+    codeInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") handleUnlock(); });
 
     acceptBtn.addEventListener("click", handleAccept);
     rejectBtn.addEventListener("click", handleReject);
 
-    // dodge behavior
-    rejectBtn.addEventListener("mouseenter", dodgeButton);
-    rejectBtn.addEventListener("mousemove", (e)=>{
-      // tiny extra nudge when close, but keep clickable
-      if(!unlocked || accepted) return;
-      if(dodgeCount >= 2) return;
-      const dx = Math.abs(e.offsetX - rejectBtn.clientWidth/2);
-      if(dx < 18) dodgeButton();
-    });
+    rejectBtn.addEventListener("mouseenter", dodgeReject);
 
     resetBtn.addEventListener("click", resetAll);
 
@@ -637,5 +647,6 @@
   </script>
 </body>
 </html>
+
 
 
