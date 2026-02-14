@@ -330,27 +330,23 @@
     }
 
     /* ===== Mobile: keep it fitting (unchanged) ===== */
-@media (max-width: 700px){
+    @media (max-width: 700px){
+      :root{
+        --envW: clamp(240px, 70vw, 340px);
+        --letterW: min(92vw, 520px);
+        --photoW: clamp(120px, 38vw, 170px);
+      }
 
-  :root{
-    --photoW: 42vw;
-  }
-
-  .photos{
-    position: absolute;
-  }
-
-  /* Spread properly for phone height */
-
-  .accL1{ left: 4vw;  top: 6%;  --rot:-14deg; }
-  .accL2{ left: 8vw;  top: 38%; --rot:10deg; }
-  .accL3{ left: 5vw;  top: 70%; --rot:-12deg; }
-
-  .accR1{ right: 4vw;  top: 10%; --rot:14deg; }
-  .accR2{ right: 8vw;  top: 50%; --rot:-12deg; }
-
-}
-
+      /* photos stack better on small screens */
+      .accL1{ left: 10px; top: 8%; }
+      .accR1{ right: 10px; top: 8%; }
+      .accL2{ left: 10px; top: 48%; }
+      .accR2{ right: 10px; top: 48%; }
+      .accL3{
+        left: 50%;
+        transform: translateX(-50%) rotate(-4deg);
+        top: 82%;
+      }
     }
   </style>
 </head>
