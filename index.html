@@ -272,7 +272,7 @@
 
     /* ===== PHOTOS (NOT BEHIND LETTER) ===== */
     .photos{
-      position:absolute;
+      position:fixed;
       inset:0;
       pointer-events:none;
       z-index: 2; /* behind letter but visible in free space */
@@ -296,35 +296,24 @@
       display:block;
     }
 
-/* REALLY spread accept photos */
+    /* ACCEPT layout: spread wide into pink area + more angle */
+    .accL1{ left: 6vw;  top: 16vh; --rot:-12deg; }
+    .accL2{ left: 10vw; top: 44vh; --rot: 9deg; }
+    .accL3{ left: 7vw;  top: 70vh; --rot:-8deg; }
+    
+    .accR1{ right: 6vw;  top: 18vh; --rot: 11deg; }
+    .accR2{ right: 9vw;  top: 56vh; --rot:-10deg; }
 
-.accL1{
-  left: clamp(100px, 12vw, 240px) !important;
-  top: 4% !important;
+    @media (max-width: 700px){
+  .accL1{ left: 4vw; top: 12vh; }
+  .accL2{ left: 6vw; top: 40vh; }
+  .accL3{ left: 4vw; top: 70vh; }
+
+  .accR1{ right: 4vw; top: 14vh; }
+  .accR2{ right: 4vw; top: 52vh; }
 }
 
-.accL2{
-  left: clamp(120px, 14vw, 280px) !important;
-  top: 45% !important;
-}
-
-.accL3{
-  left: clamp(100px, 12vw, 240px) !important;
-  top: 84% !important;
-}
-
-.accR1{
-  right: clamp(100px, 12vw, 240px) !important;
-  top: 6% !important;
-}
-
-.accR2{
-  right: clamp(100px, 12vw, 240px) !important;
-  top: 72% !important;
-}
-
-
-
+    
     /* Reject cats layout (unchanged) */
     .rej1{ left: clamp(10px, 3vw, 34px); top: 18%; --rot:-6deg; }
     .rej2{ right: clamp(10px, 3vw, 34px); top: 18%; --rot:6deg; }
